@@ -1,0 +1,77 @@
+<app-navbar></app-navbar>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Categorias</h2>
+    <button class="btn btn-warning" (click)="abrirModalNovaCategoria()">
+      <i class="fas fa-plus me-2"></i>Nova Categoria
+    </button>
+  </div>
+
+  <div class="bg-white rounded shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover m-0">
+        <thead>
+          <tr>
+            <th>NOME</th>
+            <th>DESCRIÇÃO</th>
+            <th>TIPO VALOR</th>
+            <th class="text-center">AÇÕES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let categoria of categorias">
+            <td>{{ categoria.nome }}</td>
+            <td>{{ categoria.descricao }}</td>
+            <td>{{ categoria.tipoValor }}</td>
+            <td class="text-center">
+              <button class="btn btn-outline-warning btn-sm me-2" (click)="editarCategoria(categoria)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm" (click)="excluirCategoria(categoria)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" [class.show]="modalAberto" [style.display]="modalAberto ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ categoriaParaEditar ? 'Editar' : 'Nova' }} Categoria</h5>
+        <button type="button" class="btn-close" (click)="fecharModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="salvarCategoria()">
+          <div class="mb-3">
+            <label for="nome" class="form-label">Nome*</label>
+            <input type="text" class="form-control" id="nome" [(ngModel)]="novaCategoria.nome" name="nome" required>
+          </div>
+          <div class="mb-3">
+            <label for="tipoValor" class="form-label">Tipo Valor*</label>
+            <select class="form-select" id="tipoValor" [(ngModel)]="novaCategoria.tipoValor" name="tipoValor" required>
+              <option *ngFor="let tipo of tiposValor" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-control" id="descricao" [(ngModel)]="novaCategoria.descricao" name="descricao" rows="3"></textarea>
+          </div>
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
+            <button type="submit" class="btn btn-warning">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="modalAberto"></div>

@@ -1,0 +1,61 @@
+<div class="inicio-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="assets/logo.svg" alt="EV6 Logo" class="logo">
+        <h1>Portal EV6</h1>
+      </div>
+      <div class="user-menu">
+        <span class="user-name">{{ usuario?.nome }}</span>
+        <button class="btn-logout" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          Sair
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="welcome-section">
+      <h2>Bem-vindo(a) ao Portal EV6!</h2>
+      <p>Selecione um dos produtos abaixo para começar:</p>
+    </div>
+
+    <div class="produtos-grid">
+      <div *ngFor="let produto of produtos"
+           class="produto-card"
+           (click)="navegarParaProduto(produto.rota)">
+        <div class="produto-icon">
+          <i [class]="produto.icone"></i>
+        </div>
+        <div class="produto-info">
+          <h3>{{ produto.nome }}</h3>
+          <p>{{ produto.descricao }}</p>
+        </div>
+        <div class="produto-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+
+      <!-- Card placeholder para futuros produtos -->
+      <div class="produto-card disabled">
+        <div class="produto-icon">
+          <i class="fas fa-plus"></i>
+        </div>
+        <div class="produto-info">
+          <h3>Novo Produto em Breve</h3>
+          <p>Estamos trabalhando em novas soluções para melhor atender suas necessidades.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2025 Portal EV6. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+</div>

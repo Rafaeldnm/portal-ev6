@@ -1,0 +1,116 @@
+<app-navbar></app-navbar>
+
+<main class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 fw-bold">Registro de Investimentos</h2>
+    <button (click)="abrirModal()" class="btn btn-warning text-white">
+      <i class="fas fa-plus me-2"></i>Novo Investimento
+    </button>
+  </div>
+
+  <!-- Tabela de Investimentos -->
+  <div class="bg-white rounded shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>CATEGORIA</th>
+            <th>ANO</th>
+            <th>VALOR</th>
+            <th>VALOR CORRIGIDO</th>
+            <th>DESCRIÇÃO</th>
+            <th class="text-center">AÇÕES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let investimento of investimentos">
+            <td>{{ getCategoriaNome(investimento.categoriaId) }}</td>
+            <td>{{ investimento.ano }}</td>
+            <td>{{ formatarValor(investimento.valor, getCategoriaValorTipo(investimento.categoriaId)) }}</td>
+            <td>
+              <ng-container *ngIf="getCategoriaValorTipo(investimento.categoriaId) === 'Financeiro'">
+                {{ investimento.valorCorrigido ? ('R$ ' + investimento.valorCorrigido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})) : '-' }}
+              </ng-container>
+              <ng-container *ngIf="getCategoriaValorTipo(investimento.categoriaId) !== 'Financeiro'">
+                -
+              </ng-container>
+            </td>
+            <td>{{ investimento.descricao }}</td>
+            <td class="text-center">
+              <button class="btn btn-outline-warning btn-sm me-2" (click)="editarInvestimento(investimento)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm" (click)="excluirInvestimento(investimento)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="investimentos.length === 0">
+            <td colspan="6" class="text-center py-3">Nenhum investimento registrado</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Modal de Investimento -->
+<div class="modal" [class.show]="modalAberto" [style.display]="modalAberto ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ investimentoParaEditar ? 'Editar' : 'Novo' }} Investimento</h5>
+        <button type="button" class="btn-close" (click)="fecharModal()"></button>
+      </div>
+      <form (ngSubmit)="salvarInvestimento()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="categoria" class="form-label">Categoria*</label>
+            <select id="categoria" class="form-select" required
+                    [(ngModel)]="novoInvestimento.categoriaId"
+                    name="categoriaId"
+                    (ngModelChange)="onCategoriaChange($event)">
+              <option [ngValue]="0">Selecione uma categoria</option>
+              <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
+                {{ categoria.nome }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="ano" class="form-label">Ano*</label>
+            <input type="number" id="ano" class="form-control" required
+                   [(ngModel)]="novoInvestimento.ano" name="ano"
+                   min="2000" max="2100" />
+          </div>
+          <div class="mb-3">
+            <label for="valor" class="form-label">
+              Valor*
+              <span *ngIf="categoriaSelecionada">
+                ({{ categoriaSelecionada.tipoValor === 'Financeiro' ? 'R$' :
+                     categoriaSelecionada.tipoValor === 'Percentual' ? '%' :
+                     'Número' }})
+              </span>
+            </label>
+            <input type="number" id="valor" class="form-control" required
+                   [(ngModel)]="novoInvestimento.valor" name="valor"
+                   [min]="0"
+                   [max]="categoriaSelecionada?.tipoValor === 'Percentual' ? 100 : null"
+                   [step]="categoriaSelecionada?.tipoValor === 'Numero' ? 1 : 0.01" />
+          </div>
+          <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea id="descricao" class="form-control" rows="3"
+                     [(ngModel)]="novoInvestimento.descricao" name="descricao"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
+          <button type="submit" class="btn btn-warning text-white">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="modalAberto"></div>

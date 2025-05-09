@@ -1,0 +1,10 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo circular -->
+  <circle cx="40" cy="40" r="38" fill="#EA580C"/>
+
+  <!-- Letra E estilizada -->
+  <path d="M28 25H52V31H35V37H50V43H35V49H52V55H28V25Z" fill="white"/>
+
+  <!-- Número 5 estilizado -->
+  <path d="M45 20L35 60" stroke="white" stroke-width="3"/>
+</svg>

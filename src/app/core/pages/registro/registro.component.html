@@ -1,0 +1,113 @@
+<div class="registro-container">
+  <div class="registro-card">
+    <div class="registro-header">
+      <img src="assets/logo.svg" alt="EV6 Logo" class="logo">
+      <h1>Criar Conta</h1>
+      <p class="subtitle">Preencha os dados para se registrar</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registroForm="ngForm" class="registro-form">
+      <!-- Nome -->
+      <div class="form-group">
+        <label for="nome">Nome completo</label>
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            [(ngModel)]="usuario.nome"
+            required
+            minlength="3"
+            #nome="ngModel"
+            [class.is-invalid]="nome.invalid && nome.touched"
+            placeholder="Digite seu nome completo">
+        </div>
+        <div class="invalid-feedback" *ngIf="nome.invalid && nome.touched">
+          <span *ngIf="nome.errors?.['required']">Nome é obrigatório</span>
+          <span *ngIf="nome.errors?.['minlength']">Nome deve ter no mínimo 3 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="usuario.email"
+            required
+            email
+            #email="ngModel"
+            [class.is-invalid]="email.invalid && email.touched"
+            placeholder="Digite seu e-mail">
+        </div>
+        <div class="invalid-feedback" *ngIf="email.invalid && email.touched">
+          <span *ngIf="email.errors?.['required']">E-mail é obrigatório</span>
+          <span *ngIf="email.errors?.['email']">E-mail inválido</span>
+        </div>
+      </div>
+
+      <!-- Senha -->
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input
+            [type]="mostrarSenha ? 'text' : 'password'"
+            id="senha"
+            name="senha"
+            [(ngModel)]="usuario.senha"
+            required
+            minlength="6"
+            #senha="ngModel"
+            [class.is-invalid]="senha.invalid && senha.touched"
+            placeholder="Digite sua senha">
+          <button type="button" class="btn-toggle-senha" (click)="toggleSenha('senha')">
+            <i [class]="mostrarSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="senha.invalid && senha.touched">
+          <span *ngIf="senha.errors?.['required']">Senha é obrigatória</span>
+          <span *ngIf="senha.errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Confirmar Senha -->
+      <div class="form-group">
+        <label for="confirmarSenha">Confirmar Senha</label>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input
+            [type]="mostrarConfirmarSenha ? 'text' : 'password'"
+            id="confirmarSenha"
+            name="confirmarSenha"
+            [(ngModel)]="usuario.confirmarSenha"
+            required
+            #confirmarSenha="ngModel"
+            [class.is-invalid]="confirmarSenha.invalid && confirmarSenha.touched"
+            placeholder="Confirme sua senha">
+          <button type="button" class="btn-toggle-senha" (click)="toggleSenha('confirmarSenha')">
+            <i [class]="mostrarConfirmarSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="confirmarSenha.invalid && confirmarSenha.touched">
+          <span *ngIf="confirmarSenha.errors?.['required']">Confirmação de senha é obrigatória</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-registro" [disabled]="registroForm.invalid || loading">
+        <span *ngIf="!loading">Criar Conta</span>
+        <i *ngIf="loading" class="fas fa-spinner fa-spin"></i>
+      </button>
+
+      <button type="button" class="btn-voltar" (click)="voltarParaLogin()">
+        <i class="fas fa-arrow-left"></i>
+        Voltar para Login
+      </button>
+    </form>
+  </div>
+</div>

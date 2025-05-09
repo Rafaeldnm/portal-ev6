@@ -1,0 +1,67 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="assets/logo.svg" alt="EV6 Logo" class="logo">
+      <h1>Portal EV6</h1>
+      <p class="subtitle">Acesse sua conta para continuar</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="credentials.email"
+            required
+            email
+            #email="ngModel"
+            [class.is-invalid]="email.invalid && email.touched"
+            placeholder="Digite seu e-mail">
+        </div>
+        <div class="invalid-feedback" *ngIf="email.invalid && email.touched">
+          <span *ngIf="email.errors?.['required']">E-mail é obrigatório</span>
+          <span *ngIf="email.errors?.['email']">E-mail inválido</span>
+        </div>
+      </div>
+
+      <!-- Senha -->
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input
+            [type]="mostrarSenha ? 'text' : 'password'"
+            id="senha"
+            name="senha"
+            [(ngModel)]="credentials.senha"
+            required
+            minlength="6"
+            #senha="ngModel"
+            [class.is-invalid]="senha.invalid && senha.touched"
+            placeholder="Digite sua senha">
+          <button type="button" class="btn-toggle-senha" (click)="toggleSenha()">
+            <i [class]="mostrarSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="senha.invalid && senha.touched">
+          <span *ngIf="senha.errors?.['required']">Senha é obrigatória</span>
+          <span *ngIf="senha.errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="loginForm.invalid || loading">
+        <span *ngIf="!loading">Entrar</span>
+        <i *ngIf="loading" class="fas fa-spinner fa-spin"></i>
+      </button>
+
+      <div class="registro-link">
+        <p>Primeiro acesso? <button type="button" class="btn-registro" (click)="irParaRegistro()">Criar conta</button></p>
+      </div>
+    </form>
+  </div>
+</div>
