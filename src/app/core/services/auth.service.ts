@@ -1,12 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface User {
   id: number;
   nome: string;
   email: string;
   perfil: string;
+  token?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  senha: string;
 }
 
 export interface RegistroUsuario {
@@ -21,67 +29,54 @@ export interface RegistroUsuario {
 })
 export class AuthService {
   private currentUser: User | null = null;
-  private users: User[] = [
-    {
-      id: 1,
-      nome: 'Administrador',
-      email: 'admin@example.com',
-      perfil: 'admin'
-    }
-  ];
+  private apiUrl = `${environment.apiUrl}/autenticacao`;
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   login(email: string, senha: string): Observable<User> {
-    // Simulação de API - Em produção, isso seria uma chamada HTTP real
-    const user = this.users.find(u => u.email === email);
+    const loginData: LoginRequest = { email, senha };
 
-    if (!user) {
-      return new Observable(subscriber => {
-        setTimeout(() => {
-          subscriber.error(new Error('Usuário não encontrado'));
-        }, 1000);
-      });
-    }
-
-    return of(user).pipe(
-      delay(1000),
-      tap(user => {
-        this.currentUser = user;
-        localStorage.setItem('user', JSON.stringify(user));
-      })
-    );
+    return this.http.post<User>(`${this.apiUrl}/login`, loginData)
+      .pipe(
+        tap(response => {
+          this.currentUser = response;
+          if (response.token) {
+            localStorage.setItem('token', response.token);
+          }
+          localStorage.setItem('user', JSON.stringify(response));
+        }),
+        catchError(error => {
+          console.error('Erro no login:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao realizar login'));
+        })
+      );
   }
 
   registro(dados: RegistroUsuario): Observable<User> {
-    // Simulação de API - Em produção, isso seria uma chamada HTTP real
-    if (this.users.some(u => u.email === dados.email)) {
-      return new Observable(subscriber => {
-        setTimeout(() => {
-          subscriber.error(new Error('Email já cadastrado'));
-        }, 1000);
-      });
-    }
-
-    const newUser: User = {
-      id: this.users.length + 1,
-      nome: dados.nome,
-      email: dados.email,
-      perfil: 'user'
-    };
-
-    this.users.push(newUser);
-
-    return of(newUser).pipe(delay(1000));
+    return this.http.post<User>(`${this.apiUrl}/registro`, dados)
+      .pipe(
+        tap(response => {
+          this.currentUser = response;
+          if (response.token) {
+            localStorage.setItem('token', response.token);
+          }
+          localStorage.setItem('user', JSON.stringify(response));
+        }),
+        catchError(error => {
+          console.error('Erro no registro:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao realizar registro'));
+        })
+      );
   }
 
   logout(): void {
     this.currentUser = null;
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
 
   isAuthenticated(): boolean {
-    return !!this.currentUser || !!localStorage.getItem('user');
+    return !!this.getToken();
   }
 
   getCurrentUser(): User | null {
@@ -94,5 +89,23 @@ export class AuthService {
     }
 
     return null;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  obterUsuarioAtual(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/usuario-atual`)
+      .pipe(
+        tap(user => {
+          this.currentUser = user;
+          localStorage.setItem('user', JSON.stringify(user));
+        }),
+        catchError(error => {
+          console.error('Erro ao obter usuário atual:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao obter usuário'));
+        })
+      );
   }
 }

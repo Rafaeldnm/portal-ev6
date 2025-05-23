@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './core/pages/login/login.component';
 import { RegistroComponent } from './core/pages/registro/registro.component';
 import { InicioComponent } from './core/pages/inicio/inicio.component';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 // Gestão de Investimentos Públicos
 import { CategoriasComponent } from './gestao-investimentos-publicos/categorias/categorias.component';
@@ -38,7 +39,13 @@ import { MensagemComponent } from './gestao-investimentos-publicos/components/me
     HttpClientModule,
     MensagemComponent // Importado como módulo por ser standalone
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
