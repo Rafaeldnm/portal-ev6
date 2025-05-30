@@ -11,7 +11,7 @@ interface BCBResponse {
   providedIn: 'root'
 })
 export class IpcaService {
-  // API do BCB para IPCA anual (código 433)
+  // API do BCB para IPCA mensal (código 433)
   private readonly BCB_API = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados';
 
   private ipcaCache: { [ano: number]: number } = {};
@@ -27,16 +27,50 @@ export class IpcaService {
     return this.http.get<BCBResponse[]>(this.BCB_API).pipe(
       map(response => {
         const cache: { [ano: number]: number } = {};
+        // Filtra somente o mês de dezembro (mês 11), que representa o acumulado anual do IPCA
         response.forEach(item => {
-          const ano = new Date(item.data).getFullYear();
-          cache[ano] = parseFloat(item.valor);
+          const data = new Date(item.data);
+          const ano = data.getFullYear();
+          const mes = data.getMonth();
+          if (mes === 11) { // dezembro
+            cache[ano] = parseFloat(item.valor);
+          }
         });
         this.ipcaCache = cache;
         return cache;
       }),
       catchError(() => {
-        // Em caso de erro, usar dados mockados
+        // Em caso de erro, usar dados mockados (dados anuais para dezembro)
         const mockData: { [ano: number]: number } = {
+          1980: 110.21,
+          1981: 95.99,
+          1982: 99.71,
+          1983: 211.03,
+          1984: 223.90,
+          1985: 235.07,
+          1986: 65.01,
+          1987: 415.87,
+          1988: 1037.56,
+          1989: 1782.90,
+          1990: 1620.97,
+          1991: 472.70,
+          1992: 1119.10,
+          1993: 2477.15,
+          1994: 916.46,
+          1995: 22.41,
+          1996: 9.56,
+          1997: 5.22,
+          1998: 1.65,
+          1999: 8.94,
+          2000: 6.00,
+          2001: 7.67,
+          2002: 12.53,
+          2003: 9.30,
+          2004: 7.60,
+          2005: 5.69,
+          2006: 3.14,
+          2007: 4.46,
+          2008: 5.90,
           2009: 4.31,
           2010: 5.91,
           2011: 6.50,
@@ -61,9 +95,11 @@ export class IpcaService {
     );
   }
 
-  calcularValorCorrigido(valor: number, anoInicial: number): Observable<number> {
+  calcularValorCorrigido(valor: number, anoInicial: number, anoFinal?: number): Observable<number> {
     const anoAtual = new Date().getFullYear();
-    const cacheKey = `${anoInicial}-${anoAtual}`;
+    // Se o ano final não for passado, usar o ano atual menos 1 (último ano completo)
+    const anoParaCorrigir = anoFinal && anoFinal <= anoAtual ? anoFinal : anoAtual - 1;
+    const cacheKey = `${anoInicial}-${anoParaCorrigir}`;
 
     if (this.ipcaAcumuladoCache[cacheKey] !== undefined) {
       return of(valor * (1 + this.ipcaAcumuladoCache[cacheKey] / 100));
@@ -73,24 +109,12 @@ export class IpcaService {
       map(ipcaData => {
         let valorCorrigido = valor;
 
-        // Para cada ano entre o inicial e o atual, aplicamos o IPCA
-        for (let ano = anoInicial; ano <= anoAtual; ano++) {
+        for (let ano = anoInicial; ano <= anoParaCorrigir; ano++) {
           if (ipcaData[ano]) {
-            // Aplicamos o IPCA do ano ao valor
-            valorCorrigido = valorCorrigido * (1 + ipcaData[ano] / 100);
+            valorCorrigido *= (1 + ipcaData[ano] / 100);
           }
         }
 
-        // Para anos futuros (após o ano atual), usamos projeções
-        if (anoAtual < 2025) {
-          for (let ano = anoAtual + 1; ano <= 2025; ano++) {
-            if (ipcaData[ano]) {
-              valorCorrigido = valorCorrigido * (1 + ipcaData[ano] / 100);
-            }
-          }
-        }
-
-        // Armazenamos o percentual acumulado no cache
         const percentualAcumulado = ((valorCorrigido / valor) - 1) * 100;
         this.ipcaAcumuladoCache[cacheKey] = percentualAcumulado;
 
@@ -98,4 +122,5 @@ export class IpcaService {
       })
     );
   }
+
 }

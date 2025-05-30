@@ -15,8 +15,8 @@
                       [(ngModel)]="filtros.categoriaId"
                       (ngModelChange)="onCategoriaChange($event)">
                 <option [ngValue]="0">Selecione uma categoria</option>
-                <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
-                  {{ categoria.nome }}
+                <option *ngFor="let categoria of categorias" [ngValue]="categoria.Id">
+                  {{ categoria.Nome }}
                 </option>
               </select>
             </div>
@@ -32,7 +32,7 @@
                      [(ngModel)]="filtros.anoFinal"
                      min="2000" max="2100">
             </div>
-            <div class="col-md-2" *ngIf="categoriaSelecionada?.tipoValor === 'Financeiro'">
+            <div class="col-md-2" *ngIf="categoriaSelecionada?.TipoValor === 'Financeiro'">
               <label for="tipoValor" class="form-label">Tipo de Valor</label>
               <select class="form-select" id="tipoValor"
                       [(ngModel)]="filtros.tipoValor">

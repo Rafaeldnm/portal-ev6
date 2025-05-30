@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -11,13 +11,13 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './core/pages/login/login.component';
 import { RegistroComponent } from './core/pages/registro/registro.component';
 import { InicioComponent } from './core/pages/inicio/inicio.component';
+import { MinhaContaComponent } from './core/pages/minha-conta/minha-conta.component';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
-// Gestão de Investimentos Públicos
-import { CategoriasComponent } from './gestao-investimentos-publicos/categorias/categorias.component';
-import { InvestimentosComponent } from './gestao-investimentos-publicos/investimentos/investimentos.component';
-import { GraficosComponent } from './gestao-investimentos-publicos/graficos/graficos.component';
-import { NavbarComponent } from './gestao-investimentos-publicos/navbar/navbar.component';
+// Feature Modules
+import { GestaoInvestimentosModule } from './gestao-investimentos-publicos/gestao-investimentos.module';
+
+// Standalone Components
 import { MensagemComponent } from './gestao-investimentos-publicos/components/mensagem/mensagem.component';
 
 @NgModule({
@@ -26,18 +26,17 @@ import { MensagemComponent } from './gestao-investimentos-publicos/components/me
     LoginComponent,
     RegistroComponent,
     InicioComponent,
-    CategoriasComponent,
-    InvestimentosComponent,
-    GraficosComponent,
-    NavbarComponent
+    MinhaContaComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
-    MensagemComponent // Importado como módulo por ser standalone
+    GestaoInvestimentosModule,
+    MensagemComponent // Importando o componente standalone
   ],
   providers: [
     {

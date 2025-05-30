@@ -16,21 +16,30 @@
             <th>NOME</th>
             <th>DESCRIÇÃO</th>
             <th>TIPO VALOR</th>
+            <th>DATA CRIAÇÃO</th>
+            <th>ÚLTIMA ATUALIZAÇÃO</th>
             <th class="text-center">AÇÕES</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let categoria of categorias">
-            <td>{{ categoria.nome }}</td>
-            <td>{{ categoria.descricao }}</td>
-            <td>{{ categoria.tipoValor }}</td>
+            <td>{{ categoria.Nome }}</td>
+            <td>{{ categoria.Descricao }}</td>
+            <td>{{ categoria.TipoValor }}</td>
+            <td>{{ categoria.DataCriacao | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ categoria.DataAtualizacao | date:'dd/MM/yyyy HH:mm' }}</td>
             <td class="text-center">
-              <button class="btn btn-outline-warning btn-sm me-2" (click)="editarCategoria(categoria)">
+              <button class="btn btn-outline-warning btn-sm me-2" (click)="editarCategoria(categoria)" title="Editar">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn btn-outline-danger btn-sm" (click)="excluirCategoria(categoria)">
+              <button class="btn btn-outline-danger btn-sm" (click)="excluirCategoria(categoria)" title="Excluir">
                 <i class="fas fa-trash"></i>
               </button>
+            </td>
+          </tr>
+          <tr *ngIf="categorias.length === 0">
+            <td colspan="6" class="text-center py-3">
+              Nenhuma categoria encontrada
             </td>
           </tr>
         </tbody>
@@ -48,24 +57,35 @@
         <button type="button" class="btn-close" (click)="fecharModal()"></button>
       </div>
       <div class="modal-body">
-        <form (ngSubmit)="salvarCategoria()">
+        <form #categoriaForm="ngForm" (ngSubmit)="salvarCategoria()">
           <div class="mb-3">
             <label for="nome" class="form-label">Nome*</label>
-            <input type="text" class="form-control" id="nome" [(ngModel)]="novaCategoria.nome" name="nome" required>
+            <input type="text" class="form-control" id="nome" [(ngModel)]="novaCategoria.Nome" name="nome" required minlength="3" #nome="ngModel" />
+            <div *ngIf="nome.invalid && (nome.dirty || nome.touched)" class="text-danger">
+              <small *ngIf="nome.errors?.['required']">Nome é obrigatório.</small>
+              <small *ngIf="nome.errors?.['minlength']">Nome deve ter no mínimo 3 caracteres.</small>
+            </div>
           </div>
           <div class="mb-3">
             <label for="tipoValor" class="form-label">Tipo Valor*</label>
-            <select class="form-select" id="tipoValor" [(ngModel)]="novaCategoria.tipoValor" name="tipoValor" required>
+            <select class="form-select" id="tipoValor" [(ngModel)]="novaCategoria.TipoValor" name="tipoValor" required #tipoValor="ngModel">
               <option *ngFor="let tipo of tiposValor" [value]="tipo">{{ tipo }}</option>
             </select>
+            <div *ngIf="tipoValor.invalid && (tipoValor.dirty || tipoValor.touched)" class="text-danger">
+              <small *ngIf="tipoValor.errors?.['required']">Tipo Valor é obrigatório.</small>
+            </div>
           </div>
           <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
-            <textarea class="form-control" id="descricao" [(ngModel)]="novaCategoria.descricao" name="descricao" rows="3"></textarea>
+            <textarea class="form-control" id="descricao" [(ngModel)]="novaCategoria.Descricao" name="descricao" rows="3" required minlength="3" #descricao="ngModel"></textarea>
+            <div *ngIf="descricao.invalid && (descricao.dirty || descricao.touched)" class="text-danger">
+              <small *ngIf="descricao.errors?.['required']">Descrição é obrigatória.</small>
+              <small *ngIf="descricao.errors?.['minlength']">Descrição deve ter no mínimo 3 caracteres.</small>
+            </div>
           </div>
           <div class="modal-footer px-0 pb-0">
             <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
-            <button type="submit" class="btn btn-warning">Salvar</button>
+            <button type="submit" class="btn btn-warning" [disabled]="!categoriaForm.form.valid">Salvar</button>
           </div>
         </form>
       </div>

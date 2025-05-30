@@ -24,18 +24,18 @@
         </thead>
         <tbody>
           <tr *ngFor="let investimento of investimentos">
-            <td>{{ getCategoriaNome(investimento.categoriaId) }}</td>
-            <td>{{ investimento.ano }}</td>
-            <td>{{ formatarValor(investimento.valor, getCategoriaValorTipo(investimento.categoriaId)) }}</td>
+            <td>{{ getCategoriaNome(investimento.CategoriaId) }}</td>
+            <td>{{ investimento.Ano }}</td>
+            <td>{{ formatarValor(investimento.Valor, getCategoriaValorTipo(investimento.CategoriaId)) }}</td>
             <td>
-              <ng-container *ngIf="getCategoriaValorTipo(investimento.categoriaId) === 'Financeiro'">
-                {{ investimento.valorCorrigido ? ('R$ ' + investimento.valorCorrigido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})) : '-' }}
+              <ng-container *ngIf="getCategoriaValorTipo(investimento.CategoriaId) === 'Financeiro'">
+                {{ investimento.ValorCorrigido ? ('R$ ' + investimento.ValorCorrigido.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})) : '-' }}
               </ng-container>
-              <ng-container *ngIf="getCategoriaValorTipo(investimento.categoriaId) !== 'Financeiro'">
+              <ng-container *ngIf="getCategoriaValorTipo(investimento.CategoriaId) !== 'Financeiro'">
                 -
               </ng-container>
             </td>
-            <td>{{ investimento.descricao }}</td>
+            <td>{{ investimento.Descricao }}</td>
             <td class="text-center">
               <button class="btn btn-outline-warning btn-sm me-2" (click)="editarInvestimento(investimento)">
                 <i class="fas fa-edit"></i>
@@ -67,40 +67,45 @@
           <div class="mb-3">
             <label for="categoria" class="form-label">Categoria*</label>
             <select id="categoria" class="form-select" required
-                    [(ngModel)]="novoInvestimento.categoriaId"
-                    name="categoriaId"
+                    [(ngModel)]="novoInvestimento.CategoriaId"
+                    name="CategoriaId"
                     (ngModelChange)="onCategoriaChange($event)">
               <option [ngValue]="0">Selecione uma categoria</option>
-              <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
-                {{ categoria.nome }}
+              <option *ngFor="let categoria of categorias" [ngValue]="categoria.Id">
+                {{ categoria.Nome }}
               </option>
             </select>
           </div>
           <div class="mb-3">
             <label for="ano" class="form-label">Ano*</label>
             <input type="number" id="ano" class="form-control" required
-                   [(ngModel)]="novoInvestimento.ano" name="ano"
+                   [(ngModel)]="novoInvestimento.Ano" name="Ano"
                    min="2000" max="2100" />
           </div>
           <div class="mb-3">
             <label for="valor" class="form-label">
               Valor*
               <span *ngIf="categoriaSelecionada">
-                ({{ categoriaSelecionada.tipoValor === 'Financeiro' ? 'R$' :
-                     categoriaSelecionada.tipoValor === 'Percentual' ? '%' :
+                ({{ categoriaSelecionada.TipoValor === 'Financeiro' ? 'R$' :
+                     categoriaSelecionada.TipoValor === 'Percentual' ? '%' :
                      'Número' }})
               </span>
             </label>
-            <input type="number" id="valor" class="form-control" required
-                   [(ngModel)]="novoInvestimento.valor" name="valor"
+            <input [(ngModel)]="novoInvestimento.Valor"
+                   valorMask
+                   [tipoValor]="categoriaSelecionada?.TipoValor || 'Financeiro'"
+                   type="text"
+                   id="valor"
+                   class="form-control"
+                   required
+                   name="Valor"
                    [min]="0"
-                   [max]="categoriaSelecionada?.tipoValor === 'Percentual' ? 100 : null"
-                   [step]="categoriaSelecionada?.tipoValor === 'Numero' ? 1 : 0.01" />
+                   [max]="categoriaSelecionada?.TipoValor === 'Percentual' ? 100 : null" />
           </div>
           <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
             <textarea id="descricao" class="form-control" rows="3"
-                     [(ngModel)]="novoInvestimento.descricao" name="descricao"></textarea>
+                     [(ngModel)]="novoInvestimento.Descricao" name="Descricao"></textarea>
           </div>
         </div>
         <div class="modal-footer">

@@ -8,10 +8,22 @@
       </div>
       <div class="user-menu">
         <span class="user-name">{{ usuario?.nome }}</span>
-        <button class="btn-logout" (click)="logout()">
-          <i class="fas fa-sign-out-alt"></i>
-          Sair
-        </button>
+        <div class="dropdown">
+          <button class="btn-options" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
+            <i class="fas fa-cog"></i>
+            Opções
+          </button>
+          <div class="dropdown-menu" [class.show]="isDropdownOpen">
+            <button class="dropdown-item" (click)="navegarParaMinhaConta()">
+              <i class="fas fa-user"></i>
+              Minha Conta
+            </button>
+            <button class="dropdown-item" (click)="logout()">
+              <i class="fas fa-sign-out-alt"></i>
+              Sair
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </header>

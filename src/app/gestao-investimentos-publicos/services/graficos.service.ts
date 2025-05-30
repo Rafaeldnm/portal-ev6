@@ -46,13 +46,13 @@ export class GraficosService {
       map(([categorias, investimentos]) => {
         const anos = this.obterAnosDisponiveis(investimentos, filtros);
         const categoriasFiltradas = filtros.categoria ?
-          categorias.filter(c => c.nome.toLowerCase() === filtros.categoria?.toLowerCase()) :
+          categorias.filter(c => c.Nome.toLowerCase() === filtros.categoria?.toLowerCase()) :
           categorias;
 
         return {
           labels: anos.map(ano => ano.toString()),
           datasets: categoriasFiltradas.map((categoria, index) => ({
-            label: categoria.nome,
+            label: categoria.Nome,
             data: anos.map(ano => this.calcularValorPorCategoriaEAno(
               investimentos,
               categoria.id,
@@ -73,11 +73,11 @@ export class GraficosService {
     ]).pipe(
       map(([categorias, investimentos]) => {
         const categoriasFiltradas = filtros.categoria ?
-          categorias.filter(c => c.nome.toLowerCase() === filtros.categoria?.toLowerCase()) :
+          categorias.filter(c => c.Nome.toLowerCase() === filtros.categoria?.toLowerCase()) :
           categorias;
 
         const totaisPorCategoria = categoriasFiltradas.map(categoria => ({
-          categoria: categoria.nome,
+          categoria: categoria.Nome,
           total: this.calcularTotalPorCategoria(
             investimentos,
             categoria.id,

@@ -10,9 +10,9 @@ import { MensagemService } from '../services/mensagem.service';
 export class CategoriasComponent implements OnInit {
   categorias: Categoria[] = [];
   novaCategoria = {
-    nome: '',
-    descricao: '',
-    tipoValor: 'Financeiro' as 'Financeiro' | 'Percentual' | 'Numero'
+    Nome: '',
+    Descricao: '',
+    TipoValor: 'Financeiro' as 'Financeiro' | 'Percentual' | 'Numero'
   };
   categoriaParaEditar: Categoria | null = null;
   modalAberto = false;
@@ -28,17 +28,24 @@ export class CategoriasComponent implements OnInit {
   }
 
   carregarCategorias(): void {
-    this.categoriasService.listarCategorias().subscribe(
-      categorias => this.categorias = categorias
-    );
+    this.categoriasService.listarCategorias().subscribe({
+      next: (categorias) => {
+        this.categorias = categorias;
+        console.log(categorias);
+      },
+      error: (erro) => {
+        this.mensagemService.mostrarErro('Erro ao carregar categorias');
+        console.error('Erro ao carregar categorias:', erro);
+      }
+    });
   }
 
   abrirModalNovaCategoria(): void {
     this.modalAberto = true;
     this.novaCategoria = {
-      nome: '',
-      descricao: '',
-      tipoValor: 'Financeiro'
+      Nome: '',
+      Descricao: '',
+      TipoValor: 'Financeiro'
     };
     this.categoriaParaEditar = null;
   }
@@ -46,9 +53,9 @@ export class CategoriasComponent implements OnInit {
   fecharModal(): void {
     this.modalAberto = false;
     this.novaCategoria = {
-      nome: '',
-      descricao: '',
-      tipoValor: 'Financeiro'
+      Nome: '',
+      Descricao: '',
+      TipoValor: 'Financeiro'
     };
     this.categoriaParaEditar = null;
   }
@@ -56,21 +63,19 @@ export class CategoriasComponent implements OnInit {
   salvarCategoria(): void {
     if (this.categoriaParaEditar) {
       this.categoriasService.atualizarCategoria(
-        this.categoriaParaEditar.id,
+        this.categoriaParaEditar.Id,
         { ...this.novaCategoria }
       ).subscribe({
         next: (categoriaAtualizada) => {
-          if (categoriaAtualizada) {
-            this.mensagemService.mostrarSucesso(
-              `Categoria ${categoriaAtualizada.nome} foi atualizada com sucesso`
-            );
-            this.carregarCategorias();
-            this.fecharModal();
-          }
+          this.mensagemService.mostrarSucesso(
+            `Categoria ${categoriaAtualizada.Nome} foi atualizada com sucesso`
+          );
+          this.carregarCategorias();
+          this.fecharModal();
         },
-        error: () => {
+        error: (erro) => {
           this.mensagemService.mostrarErro(
-            `Erro ao atualizar categoria ${this.novaCategoria.nome}`
+            erro.message || `Erro ao atualizar categoria ${this.novaCategoria.Nome}`
           );
         }
       });
@@ -78,14 +83,14 @@ export class CategoriasComponent implements OnInit {
       this.categoriasService.adicionarCategoria(this.novaCategoria).subscribe({
         next: (categoriaCriada) => {
           this.mensagemService.mostrarSucesso(
-            `Categoria ${categoriaCriada.nome} foi inserida com sucesso`
+            `Categoria ${categoriaCriada.Nome} foi inserida com sucesso`
           );
           this.carregarCategorias();
           this.fecharModal();
         },
-        error: () => {
+        error: (erro) => {
           this.mensagemService.mostrarErro(
-            `Erro ao inserir categoria ${this.novaCategoria.nome}`
+            erro.message || `Erro ao inserir categoria ${this.novaCategoria.Nome}`
           );
         }
       });
@@ -95,27 +100,25 @@ export class CategoriasComponent implements OnInit {
   editarCategoria(categoria: Categoria): void {
     this.categoriaParaEditar = { ...categoria };
     this.novaCategoria = {
-      nome: categoria.nome,
-      descricao: categoria.descricao,
-      tipoValor: categoria.tipoValor
+      Nome: categoria.Nome,
+      Descricao: categoria.Descricao,
+      TipoValor: categoria.TipoValor
     };
     this.modalAberto = true;
   }
 
   excluirCategoria(categoria: Categoria): void {
-    if (confirm(`Deseja realmente excluir a categoria ${categoria.nome}?`)) {
-      this.categoriasService.excluirCategoria(categoria.id).subscribe({
-        next: (sucesso) => {
-          if (sucesso) {
-            this.mensagemService.mostrarSucesso(
-              `Categoria ${categoria.nome} foi excluída com sucesso`
-            );
-            this.carregarCategorias();
-          }
+    if (confirm(`Deseja realmente excluir a categoria ${categoria.Nome}?`)) {
+      this.categoriasService.excluirCategoria(categoria.Id).subscribe({
+        next: () => {
+          this.mensagemService.mostrarSucesso(
+            `Categoria ${categoria.Nome} foi excluída com sucesso`
+          );
+          this.carregarCategorias();
         },
-        error: () => {
+        error: (erro) => {
           this.mensagemService.mostrarErro(
-            `Erro ao excluir categoria ${categoria.nome}`
+            erro.message || `Erro ao excluir categoria ${categoria.Nome}`
           );
         }
       });

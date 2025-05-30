@@ -1,53 +1,76 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface Categoria {
-  id: number;
-  nome: string;
-  descricao: string;
-  tipoValor: 'Financeiro' | 'Percentual' | 'Numero';
+  Id: number;
+  Nome: string;
+  Descricao: string;
+  TipoValor: 'Financeiro' | 'Percentual' | 'Numero';
+  DataCriacao: Date;
+  DataAtualizacao?: Date;
+}
+
+export interface CategoriaInserirRequest {
+  Nome: string;
+  Descricao: string;
+  TipoValor: 'Financeiro' | 'Percentual' | 'Numero';
+}
+
+export interface CategoriaUpdate {
+  Nome?: string;
+  Descricao?: string;
+  TipoValor?: 'Financeiro' | 'Percentual' | 'Numero';
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriasService {
-  private categorias: Categoria[] = [
-    { id: 1, nome: 'Saúde', descricao: 'Investimentos em saúde pública', tipoValor: 'Financeiro' },
-    { id: 2, nome: 'Academia', descricao: 'Investimentos em academias ao ar livre', tipoValor: 'Financeiro' },
-    { id: 3, nome: 'Custo HGL', descricao: 'Custos hospitalares gerais', tipoValor: 'Financeiro' }
-  ];
+  private apiUrl = `${environment.apiUrl}/gestao-investimentos/categorias`;
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   listarCategorias(): Observable<Categoria[]> {
-    return of(this.categorias);
+    return this.http.get<Categoria[]>(this.apiUrl)
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao listar categorias:', error);
+          return throwError(() => new Error('Erro ao carregar categorias. Por favor, tente novamente.'));
+        })
+      );
   }
 
-  adicionarCategoria(categoria: Omit<Categoria, 'id'>): Observable<Categoria> {
-    const novaCategoria = {
-      ...categoria,
-      id: Math.max(...this.categorias.map(c => c.id)) + 1
-    };
-    this.categorias.push(novaCategoria);
-    return of(novaCategoria);
+  adicionarCategoria(request: CategoriaInserirRequest): Observable<Categoria> {
+    // Enviar o objeto dentro de categoriaDto para atender a validação do backend
+    return this.http.post<Categoria>(this.apiUrl, request)
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao adicionar categoria:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao adicionar categoria. Por favor, tente novamente.'));
+        })
+      );
   }
 
-  atualizarCategoria(id: number, categoria: Partial<Categoria>): Observable<Categoria | undefined> {
-    const index = this.categorias.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.categorias[index] = { ...this.categorias[index], ...categoria };
-      return of(this.categorias[index]);
-    }
-    return of(undefined);
+  atualizarCategoria(id: number, categoria: CategoriaUpdate): Observable<Categoria> {
+    return this.http.put<Categoria>(`${this.apiUrl}/${id}`, categoria)
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao atualizar categoria:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao atualizar categoria. Por favor, tente novamente.'));
+        })
+      );
   }
 
-  excluirCategoria(id: number): Observable<boolean> {
-    const index = this.categorias.findIndex(c => c.id === id);
-    if (index !== -1) {
-      this.categorias.splice(index, 1);
-      return of(true);
-    }
-    return of(false);
+  excluirCategoria(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao excluir categoria:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao excluir categoria. Por favor, tente novamente.'));
+        })
+      );
   }
 }

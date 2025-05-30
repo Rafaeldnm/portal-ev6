@@ -1,0 +1,106 @@
+<div class="conta-container">
+  <div class="conta-header">
+    <button class="btn-voltar" (click)="voltarInicio()">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+    <h1>Minha Conta</h1>
+  </div>
+
+  <div class="conta-card">
+    <div class="form-section">
+      <h2>Dados Pessoais</h2>
+      <form [formGroup]="perfilForm" (ngSubmit)="atualizarPerfil()">
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input
+            type="text"
+            id="nome"
+            formControlName="nome"
+            [class.is-invalid]="perfilForm.get('nome')?.invalid && perfilForm.get('nome')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="perfilForm.get('nome')?.errors?.['required'] && perfilForm.get('nome')?.touched">
+            Nome é obrigatório
+          </div>
+          <div class="invalid-feedback" *ngIf="perfilForm.get('nome')?.errors?.['minlength'] && perfilForm.get('nome')?.touched">
+            Nome deve ter no mínimo 3 caracteres
+          </div>
+        </div>
+
+        <button type="submit" class="btn-atualizar" [disabled]="perfilForm.invalid || loading">
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          Atualizar Perfil
+        </button>
+      </form>
+    </div>
+
+    <div class="form-section">
+      <h2>Alterar Senha</h2>
+      <form [formGroup]="senhaForm" (ngSubmit)="atualizarSenha()">
+        <div class="form-group">
+          <label for="senhaAtual">Senha Atual</label>
+          <div class="input-group">
+            <input
+              [type]="mostrarSenhaAtual ? 'text' : 'password'"
+              id="senhaAtual"
+              formControlName="senhaAtual"
+              [class.is-invalid]="senhaForm.get('senhaAtual')?.invalid && senhaForm.get('senhaAtual')?.touched"
+            >
+            <button type="button" class="btn-toggle-senha" (click)="toggleSenha('atual')">
+              <i [class]="mostrarSenhaAtual ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback" *ngIf="senhaForm.get('senhaAtual')?.errors?.['required'] && senhaForm.get('senhaAtual')?.touched">
+            Senha atual é obrigatória
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="novaSenha">Nova Senha</label>
+          <div class="input-group">
+            <input
+              [type]="mostrarNovaSenha ? 'text' : 'password'"
+              id="novaSenha"
+              formControlName="novaSenha"
+              [class.is-invalid]="senhaForm.get('novaSenha')?.invalid && senhaForm.get('novaSenha')?.touched"
+            >
+            <button type="button" class="btn-toggle-senha" (click)="toggleSenha('nova')">
+              <i [class]="mostrarNovaSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback" *ngIf="senhaForm.get('novaSenha')?.errors?.['required'] && senhaForm.get('novaSenha')?.touched">
+            Nova senha é obrigatória
+          </div>
+          <div class="invalid-feedback" *ngIf="senhaForm.get('novaSenha')?.errors?.['minlength'] && senhaForm.get('novaSenha')?.touched">
+            Nova senha deve ter no mínimo 6 caracteres
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmarSenha">Confirmar Nova Senha</label>
+          <div class="input-group">
+            <input
+              [type]="mostrarConfirmarSenha ? 'text' : 'password'"
+              id="confirmarSenha"
+              formControlName="confirmarSenha"
+              [class.is-invalid]="senhaForm.get('confirmarSenha')?.invalid && senhaForm.get('confirmarSenha')?.touched"
+            >
+            <button type="button" class="btn-toggle-senha" (click)="toggleSenha('confirmar')">
+              <i [class]="mostrarConfirmarSenha ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+          <div class="invalid-feedback" *ngIf="senhaForm.get('confirmarSenha')?.errors?.['required'] && senhaForm.get('confirmarSenha')?.touched">
+            Confirmação de senha é obrigatória
+          </div>
+          <div class="invalid-feedback" *ngIf="senhaForm.errors?.['senhasNaoConferem'] && senhaForm.get('confirmarSenha')?.touched">
+            As senhas não conferem
+          </div>
+        </div>
+
+        <button type="submit" class="btn-atualizar" [disabled]="senhaForm.invalid || loading">
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          Atualizar Senha
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

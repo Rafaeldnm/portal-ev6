@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js/auto';
 import { CategoriasService, Categoria } from '../services/categorias.service';
 import { InvestimentosService, Investimento } from '../services/investimentos.service';
+import { IpcaService } from '../services/ipca.service';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-graficos',
@@ -31,29 +34,46 @@ export class GraficosComponent implements OnInit {
 
   constructor(
     private categoriasService: CategoriasService,
-    private investimentosService: InvestimentosService
+    private investimentosService: InvestimentosService,
+    private ipcaService: IpcaService
   ) { }
 
   ngOnInit(): void {
-    this.carregarCategorias();
-    this.carregarInvestimentos();
-  }
-
-  carregarCategorias(): void {
-    this.categoriasService.listarCategorias().subscribe(categorias => {
-      this.categorias = categorias;
-    });
+    this.categoriasService.listarCategorias().subscribe(
+      categorias => {
+        this.categorias = categorias;
+        this.carregarInvestimentos();
+      }
+    );
   }
 
   carregarInvestimentos(): void {
-    this.investimentosService.listarInvestimentos().subscribe(investimentos => {
-      this.investimentos = investimentos;
+    this.investimentosService.listarInvestimentos().pipe(
+      switchMap(investimentos => {
+        const atualizacoes = investimentos.map(investimento => {
+          const categoria = this.categorias.find(c => c.Id === investimento.CategoriaId);
+          if (categoria?.TipoValor === 'Financeiro') {
+            return this.ipcaService.calcularValorCorrigido(investimento.Valor, investimento.Ano)
+              .pipe(
+                switchMap(valorCorrigido => {
+                  investimento.ValorCorrigido = valorCorrigido;
+                  return of(investimento);
+                })
+              );
+          }
+          return of(investimento);
+        });
+
+        return forkJoin(atualizacoes);
+      })
+    ).subscribe(investimentosAtualizados => {
+      this.investimentos = investimentosAtualizados;
       this.atualizarGrafico();
     });
   }
 
   onCategoriaChange(categoriaId: number): void {
-    this.categoriaSelecionada = this.categorias.find(c => c.id === +categoriaId) || null;
+    this.categoriaSelecionada = this.categorias.find(c => c.Id === +categoriaId) || null;
     this.atualizarGrafico();
   }
 
@@ -69,32 +89,32 @@ export class GraficosComponent implements OnInit {
 
     // Filtra investimentos da categoria selecionada
     const investimentosFiltrados = this.investimentos.filter(
-      inv => inv.categoriaId === this.categoriaSelecionada?.id
+      inv => inv.CategoriaId === this.categoriaSelecionada?.Id
     );
 
     // Filtra por período
     const investimentosPeriodo = investimentosFiltrados.filter(
-      inv => inv.ano >= this.filtros.anoInicial && inv.ano <= this.filtros.anoFinal
+      inv => inv.Ano >= this.filtros.anoInicial && inv.Ano <= this.filtros.anoFinal
     );
 
     // Ordena por ano
-    investimentosPeriodo.sort((a, b) => a.ano - b.ano);
+    investimentosPeriodo.sort((a, b) => a.Ano - b.Ano);
 
     // Prepara dados para o gráfico
-    const anos = investimentosPeriodo.map(inv => inv.ano.toString());
+    const anos = investimentosPeriodo.map(inv => inv.Ano.toString());
     const valores = investimentosPeriodo.map(inv => {
       if (this.filtros.tipoValor === 'corrigido' &&
-          this.categoriaSelecionada?.tipoValor === 'Financeiro' &&
-          inv.valorCorrigido !== undefined) {
-        return inv.valorCorrigido;
+          this.categoriaSelecionada?.TipoValor === 'Financeiro' &&
+          inv.ValorCorrigido !== undefined) {
+        return inv.ValorCorrigido;
       }
-      return inv.valor;
+      return inv.Valor;
     });
 
     this.dadosGraficoBarras = {
       labels: anos,
       datasets: [{
-        label: this.categoriaSelecionada.nome,
+        label: this.categoriaSelecionada.Nome,
         data: valores,
         backgroundColor: this.corPrincipal
       }]
@@ -120,7 +140,7 @@ export class GraficosComponent implements OnInit {
             ticks: {
               callback: (value: number | string) => {
                 if (this.categoriaSelecionada) {
-                  switch (this.categoriaSelecionada.tipoValor) {
+                  switch (this.categoriaSelecionada.TipoValor) {
                     case 'Financeiro':
                       return `R$ ${value}`;
                     case 'Percentual':
@@ -150,7 +170,7 @@ export class GraficosComponent implements OnInit {
               label: (context: any) => {
                 const value = context.parsed.y;
                 if (this.categoriaSelecionada) {
-                  switch (this.categoriaSelecionada.tipoValor) {
+                  switch (this.categoriaSelecionada.TipoValor) {
                     case 'Financeiro':
                       return `R$ ${value}`;
                     case 'Percentual':

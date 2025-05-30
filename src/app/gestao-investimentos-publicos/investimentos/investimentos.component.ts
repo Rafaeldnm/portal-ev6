@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { InvestimentosService, Investimento } from '../services/investimentos.service';
 import { CategoriasService, Categoria } from '../services/categorias.service';
 import { MensagemService } from '../services/mensagem.service';
+import { IpcaService } from '../services/ipca.service';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-investimentos',
@@ -13,10 +16,10 @@ export class InvestimentosComponent implements OnInit {
   categorias: Categoria[] = [];
   modalAberto = false;
   novoInvestimento = {
-    categoriaId: 0,
-    valor: 0,
-    ano: new Date().getFullYear(),
-    descricao: ''
+    CategoriaId: 0,
+    Valor: 0,
+    Ano: new Date().getFullYear(),
+    Descricao: ''
   };
   investimentoParaEditar: Investimento | null = null;
   categoriaSelecionada: Categoria | null = null;
@@ -24,33 +27,50 @@ export class InvestimentosComponent implements OnInit {
   constructor(
     private investimentosService: InvestimentosService,
     private categoriasService: CategoriasService,
-    private mensagemService: MensagemService
+    private mensagemService: MensagemService,
+    private ipcaService: IpcaService
   ) { }
 
   ngOnInit(): void {
-    this.carregarInvestimentos();
-    this.carregarCategorias();
+    this.categoriasService.listarCategorias().subscribe(
+      categorias => {
+        this.categorias = categorias;
+        this.carregarInvestimentos();
+      }
+    );
   }
 
   carregarInvestimentos(): void {
-    this.investimentosService.listarInvestimentos().subscribe(
-      investimentos => this.investimentos = investimentos
-    );
-  }
+    this.investimentosService.listarInvestimentos().pipe(
+      switchMap(investimentos => {
+        const atualizacoes = investimentos.map(investimento => {
+          const categoria = this.categorias.find(c => c.Id === investimento.CategoriaId);
+          if (categoria?.TipoValor === 'Financeiro') {
+            return this.ipcaService.calcularValorCorrigido(investimento.Valor, investimento.Ano)
+              .pipe(
+                switchMap(valorCorrigido => {
+                  investimento.ValorCorrigido = valorCorrigido;
+                  return of(investimento);
+                })
+              );
+          }
+          return of(investimento);
+        });
 
-  carregarCategorias(): void {
-    this.categoriasService.listarCategorias().subscribe(
-      categorias => this.categorias = categorias
-    );
+        return forkJoin(atualizacoes);
+      })
+    ).subscribe(investimentosAtualizados => {
+      this.investimentos = investimentosAtualizados;
+    });
   }
 
   abrirModal(): void {
     this.modalAberto = true;
     this.novoInvestimento = {
-      categoriaId: 0,
-      valor: 0,
-      ano: new Date().getFullYear(),
-      descricao: ''
+      CategoriaId: 0,
+      Valor: 0,
+      Ano: new Date().getFullYear(),
+      Descricao: ''
     };
     this.investimentoParaEditar = null;
     this.categoriaSelecionada = null;
@@ -59,19 +79,18 @@ export class InvestimentosComponent implements OnInit {
   fecharModal(): void {
     this.modalAberto = false;
     this.novoInvestimento = {
-      categoriaId: 0,
-      valor: 0,
-      ano: new Date().getFullYear(),
-      descricao: ''
+      CategoriaId: 0,
+      Valor: 0,
+      Ano: new Date().getFullYear(),
+      Descricao: ''
     };
     this.investimentoParaEditar = null;
     this.categoriaSelecionada = null;
   }
 
   onCategoriaChange(categoriaId: number): void {
-    this.categoriaSelecionada = this.categorias.find(c => c.id === +categoriaId) || null;
-    // Reset valor when changing category
-    this.novoInvestimento.valor = 0;
+    this.categoriaSelecionada = this.categorias.find(c => c.Id === +categoriaId) || null;
+    this.novoInvestimento.Valor = 0;
   }
 
   formatarValor(valor: number, tipoValor: string): string {
@@ -106,61 +125,60 @@ export class InvestimentosComponent implements OnInit {
       return;
     }
 
-    if (!this.validarValor(this.novoInvestimento.valor, this.categoriaSelecionada.tipoValor)) {
+    if (!this.validarValor(this.novoInvestimento.Valor, this.categoriaSelecionada.TipoValor)) {
       this.mensagemService.mostrarErro('Valor inválido para o tipo selecionado');
       return;
     }
 
-    if (this.investimentoParaEditar) {
-      this.investimentosService.atualizarInvestimento(
-        this.investimentoParaEditar.id,
-        this.novoInvestimento
-      ).subscribe({
-        next: (investimentoAtualizado) => {
-          if (investimentoAtualizado) {
-            this.mensagemService.mostrarSucesso('Investimento atualizado com sucesso!');
-            this.carregarInvestimentos();
-            this.fecharModal();
-          }
-        },
-        error: () => {
-          this.mensagemService.mostrarErro('Erro ao atualizar investimento');
+    const operacao = this.investimentoParaEditar
+      ? this.investimentosService.atualizarInvestimento(this.investimentoParaEditar.Id, this.novoInvestimento)
+      : this.investimentosService.adicionarInvestimento(this.novoInvestimento);
+
+    operacao.pipe(
+      switchMap(() => {
+        if (this.categoriaSelecionada?.TipoValor === 'Financeiro') {
+          return this.ipcaService.calcularValorCorrigido(this.novoInvestimento.Valor, this.novoInvestimento.Ano);
         }
-      });
-    } else {
-      this.investimentosService.adicionarInvestimento(this.novoInvestimento).subscribe({
-        next: (investimentoCriado) => {
-          this.mensagemService.mostrarSucesso('Investimento adicionado com sucesso!');
-          this.carregarInvestimentos();
-          this.fecharModal();
-        },
-        error: () => {
-          this.mensagemService.mostrarErro('Erro ao adicionar investimento');
-        }
-      });
-    }
+        return of(null);
+      })
+    ).subscribe({
+      next: () => {
+        this.mensagemService.mostrarSucesso(
+          this.investimentoParaEditar
+            ? 'Investimento atualizado com sucesso!'
+            : 'Investimento adicionado com sucesso!'
+        );
+        this.carregarInvestimentos();
+        this.fecharModal();
+      },
+      error: () => {
+        this.mensagemService.mostrarErro(
+          this.investimentoParaEditar
+            ? 'Erro ao atualizar investimento'
+            : 'Erro ao adicionar investimento'
+        );
+      }
+    });
   }
 
   editarInvestimento(investimento: Investimento): void {
     this.investimentoParaEditar = { ...investimento };
     this.novoInvestimento = {
-      categoriaId: investimento.categoriaId,
-      valor: investimento.valor,
-      ano: investimento.ano,
-      descricao: investimento.descricao
+      CategoriaId: investimento.CategoriaId,
+      Valor: investimento.Valor,
+      Ano: investimento.Ano,
+      Descricao: investimento.Descricao
     };
-    this.categoriaSelecionada = this.categorias.find(c => c.id === investimento.categoriaId) || null;
+    this.categoriaSelecionada = this.categorias.find(c => c.Id === investimento.CategoriaId) || null;
     this.modalAberto = true;
   }
 
   excluirInvestimento(investimento: Investimento): void {
     if (confirm(`Deseja realmente excluir este investimento?`)) {
-      this.investimentosService.excluirInvestimento(investimento.id).subscribe({
-        next: (sucesso) => {
-          if (sucesso) {
-            this.mensagemService.mostrarSucesso('Investimento excluído com sucesso!');
-            this.carregarInvestimentos();
-          }
+      this.investimentosService.excluirInvestimento(investimento.Id).subscribe({
+        next: () => {
+          this.mensagemService.mostrarSucesso('Investimento excluído com sucesso!');
+          this.carregarInvestimentos();
         },
         error: () => {
           this.mensagemService.mostrarErro('Erro ao excluir investimento');
@@ -170,12 +188,12 @@ export class InvestimentosComponent implements OnInit {
   }
 
   getCategoriaNome(categoriaId: number): string {
-    const categoria = this.categorias.find(c => c.id === categoriaId);
-    return categoria ? categoria.nome : '';
+    const categoria = this.categorias.find(c => c.Id === categoriaId);
+    return categoria ? categoria.Nome : '';
   }
 
   getCategoriaValorTipo(categoriaId: number): string {
-    const categoria = this.categorias.find(c => c.id === categoriaId);
-    return categoria ? categoria.tipoValor : 'Financeiro';
+    const categoria = this.categorias.find(c => c.Id === categoriaId);
+    return categoria ? categoria.TipoValor : 'Financeiro';
   }
 }

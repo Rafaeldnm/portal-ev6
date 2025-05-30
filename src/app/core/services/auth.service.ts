@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface User {
@@ -24,6 +24,15 @@ export interface RegistroUsuario {
   confirmarSenha?: string;
 }
 
+export interface AtualizarPerfilRequestDto {
+  nome: string;
+}
+
+export interface AtualizarSenhaRequestDto {
+  senhaAtual: string;
+  novaSenha: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,14 +45,22 @@ export class AuthService {
   login(email: string, senha: string): Observable<User> {
     const loginData: LoginRequest = { email, senha };
 
-    return this.http.post<User>(`${this.apiUrl}/login`, loginData)
+    return this.http.post<{Id: number; Nome: string; Email: string; Perfil: string; Token: string}>(`${this.apiUrl}/login`, loginData)
       .pipe(
-        tap(response => {
-          this.currentUser = response;
-          if (response.token) {
-            localStorage.setItem('token', response.token);
+        map(response => {
+          const user: User = {
+            id: response.Id,
+            nome: response.Nome,
+            email: response.Email,
+            perfil: response.Perfil,
+            token: response.Token
+          };
+          this.currentUser = user;
+          if (user.token) {
+            localStorage.setItem('token', user.token);
           }
-          localStorage.setItem('user', JSON.stringify(response));
+          localStorage.setItem('user', JSON.stringify(user));
+          return user;
         }),
         catchError(error => {
           console.error('Erro no login:', error);
@@ -53,14 +70,22 @@ export class AuthService {
   }
 
   registro(dados: RegistroUsuario): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/registro`, dados)
+    return this.http.post<{Id: number; Nome: string; Email: string; Perfil: string; Token: string}>(`${this.apiUrl}/registro`, dados)
       .pipe(
-        tap(response => {
-          this.currentUser = response;
-          if (response.token) {
-            localStorage.setItem('token', response.token);
+        map(response => {
+          const user: User = {
+            id: response.Id,
+            nome: response.Nome,
+            email: response.Email,
+            perfil: response.Perfil,
+            token: response.Token
+          };
+          this.currentUser = user;
+          if (user.token) {
+            localStorage.setItem('token', user.token);
           }
-          localStorage.setItem('user', JSON.stringify(response));
+          localStorage.setItem('user', JSON.stringify(user));
+          return user;
         }),
         catchError(error => {
           console.error('Erro no registro:', error);
@@ -105,6 +130,30 @@ export class AuthService {
         catchError(error => {
           console.error('Erro ao obter usuário atual:', error);
           return throwError(() => new Error(error.error?.mensagem || 'Erro ao obter usuário'));
+        })
+      );
+  }
+
+  atualizarPerfil(perfil: AtualizarPerfilRequestDto): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/perfil`, perfil)
+      .pipe(
+        tap(user => {
+          this.currentUser = user;
+          localStorage.setItem('user', JSON.stringify(user));
+        }),
+        catchError(error => {
+          console.error('Erro ao atualizar perfil:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao atualizar perfil'));
+        })
+      );
+  }
+
+  atualizarSenha(senha: AtualizarSenhaRequestDto): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/senha`, senha)
+      .pipe(
+        catchError(error => {
+          console.error('Erro ao atualizar senha:', error);
+          return throwError(() => new Error(error.error?.mensagem || 'Erro ao atualizar senha'));
         })
       );
   }

@@ -1,78 +1,98 @@
-.registro-container {
-  min-height: 100vh;
+.conta-container {
+  min-height: calc(100vh - 64px);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   background-color: #f5f7fa;
-  padding: 20px;
+  padding: 40px 20px;
 }
 
-.registro-card {
+.conta-header {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.conta-header h1 {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+}
+
+.btn-voltar {
+  background: none;
+  border: none;
+  color: #4a90e2;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+}
+
+.btn-voltar:hover {
+  text-decoration: underline;
+}
+
+.conta-card {
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 40px;
   width: 100%;
-  max-width: 420px;
+  max-width: 600px;
   border: 1px solid #e0e0e0;
-}
-
-.registro-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.logo {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 20px;
 }
 
 h1 {
   color: #222;
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 32px;
+  text-align: center;
 }
 
-.subtitle {
-  color: #666;
-  font-size: 16px;
+.form-section {
+  margin-bottom: 40px;
 }
 
-.registro-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.form-section:last-child {
+  margin-bottom: 0;
+}
+
+h2 {
+  color: #4b5563;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  margin-bottom: 24px;
 }
 
 label {
-  color: #555;
+  display: block;
+  color: #4b5563;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
 .input-group {
   position: relative;
   display: flex;
   align-items: center;
-}
-
-.input-group i:first-child {
-  position: absolute;
-  left: 16px;
-  color: #bbb;
+  width: 100%;
 }
 
 input {
   width: 100%;
-  padding: 12px 16px 12px 44px;
+  padding: 12px 44px 12px 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
@@ -88,39 +108,37 @@ input:focus {
 }
 
 input.is-invalid {
-  border-color: #e74c3c;
+  border-color: #ef4444;
 }
 
 .invalid-feedback {
-  color: #e74c3c;
+  color: #ef4444;
   font-size: 14px;
   margin-top: 4px;
 }
 
 .btn-toggle-senha {
   position: absolute;
-  right: 12px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #bbb;
+  color: #9ca3af;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  width: 32px;
-  height: 32px;
-  font-size: 17px;
+  transition: all 0.2s;
+  z-index: 1;
 }
 
 .btn-toggle-senha:hover {
-  color: #4a90e2;
+  color: #6b7280;
 }
 
-.btn-registro {
+.btn-atualizar {
   background: #4a90e2;
   color: white;
   border: none;
@@ -131,40 +149,19 @@ input.is-invalid {
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
-}
-
-.btn-registro:hover:not(:disabled) {
-  background: #357abd;
-}
-
-.btn-registro:disabled {
-  background: #cbd6e2;
-  cursor: not-allowed;
-}
-
-.btn-voltar {
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 10px;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
-  margin-top: 8px;
 }
 
-.btn-voltar:hover {
-  color: #4a90e2;
+.btn-atualizar:hover:not(:disabled) {
+  background: #357abd;
 }
 
-.btn-voltar i {
-  font-size: 12px;
+.btn-atualizar:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
 }
 
 .fa-spinner {
@@ -177,7 +174,7 @@ input.is-invalid {
 }
 
 @media (max-width: 480px) {
-  .registro-card {
+  .conta-card {
     padding: 24px;
   }
 
@@ -185,8 +182,8 @@ input.is-invalid {
     font-size: 24px;
   }
 
-  .subtitle {
-    font-size: 14px;
+  h2 {
+    font-size: 18px;
   }
 
   input {
