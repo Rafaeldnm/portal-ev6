@@ -98,7 +98,7 @@ export class IpcaService {
   calcularValorCorrigido(valor: number, anoInicial: number, anoFinal?: number): Observable<number> {
     const anoAtual = new Date().getFullYear();
     // Se o ano final não for passado, usar o ano atual menos 1 (último ano completo)
-    const anoParaCorrigir = anoFinal && anoFinal <= anoAtual ? anoFinal : anoAtual - 1;
+    const anoParaCorrigir = anoFinal && anoFinal <= anoAtual ? anoFinal : anoAtual - 2;
     const cacheKey = `${anoInicial}-${anoParaCorrigir}`;
 
     if (this.ipcaAcumuladoCache[cacheKey] !== undefined) {

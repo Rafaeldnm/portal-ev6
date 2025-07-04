@@ -18,7 +18,7 @@ export class GraficosComponent implements OnInit {
   categoriaSelecionada: Categoria | null = null;
 
   // Paleta de cores
-  private corPrincipal = '#ea580c'; // Laranja principal
+  private corPrincipal = '#fb923c'; // Laranja principal (mais claro ainda)
 
   filtros = {
     categoriaId: 0,

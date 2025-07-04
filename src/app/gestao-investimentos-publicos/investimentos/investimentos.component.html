@@ -91,17 +91,20 @@
                      'Número' }})
               </span>
             </label>
-            <input [(ngModel)]="novoInvestimento.Valor"
-                   valorMask
-                   [tipoValor]="categoriaSelecionada?.TipoValor || 'Financeiro'"
-                   type="text"
-                   id="valor"
-                   class="form-control"
-                   required
-                   name="Valor"
-                   [min]="0"
-                   [max]="categoriaSelecionada?.TipoValor === 'Percentual' ? 100 : null" />
+
+            <input
+              [(ngModel)]="novoInvestimento.Valor"
+              type="text"
+              valorMask
+              [tipoValor]="categoriaSelecionada?.TipoValor || 'Financeiro'"
+              name="Valor"
+              id="Valor"
+              class="form-control"
+              placeholder="R$ 0" />
+
+
           </div>
+
           <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
             <textarea id="descricao" class="form-control" rows="3"
