@@ -16,6 +16,12 @@ export class InicioComponent implements OnInit {
       descricao: 'Gerencie e monitore investimentos públicos com análises detalhadas e gráficos interativos.',
       icone: 'fas fa-chart-line',
       rota: '/gestao-investimentos-publicos'
+    },
+    {
+      nome: 'Gestão Orçamentária',
+      descricao: 'Gerencie orçamentos e despesas com análises detalhadas e relatórios completos.',
+      icone: 'fas fa-file-invoice-dollar',
+      rota: '/gestao-orcamentaria'
     }
   ];
 

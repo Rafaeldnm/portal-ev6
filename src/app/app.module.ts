@@ -16,6 +16,14 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
 // Feature Modules
 import { GestaoInvestimentosModule } from './gestao-investimentos-publicos/gestao-investimentos.module';
+import { GestaoOrcamentariaModule } from './gestao-orcamentaria/gestao-orcamentaria.module';
+
+// Material Modules
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 // Standalone Components
 import { MensagemComponent } from './gestao-investimentos-publicos/components/mensagem/mensagem.component';
@@ -36,7 +44,13 @@ import { MensagemComponent } from './gestao-investimentos-publicos/components/me
     ReactiveFormsModule,
     HttpClientModule,
     GestaoInvestimentosModule,
-    MensagemComponent // Importando o componente standalone
+    GestaoOrcamentariaModule,
+    MensagemComponent, // Importando o componente standalone
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     {

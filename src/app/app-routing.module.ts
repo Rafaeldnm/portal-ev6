@@ -24,6 +24,11 @@ const routes: Routes = [
       { path: '', redirectTo: 'graficos', pathMatch: 'full' }
     ]
   },
+  {
+    path: 'gestao-orcamentaria',
+    loadChildren: () => import('./gestao-orcamentaria/gestao-orcamentaria.module').then(m => m.GestaoOrcamentariaModule),
+    canActivate: [AuthGuard]
+  },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
   { path: '**', redirectTo: 'inicio' }
 ];

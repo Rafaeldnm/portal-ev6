@@ -1,0 +1,115 @@
+<app-navbar-gestao-orcamentaria></app-navbar-gestao-orcamentaria>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="atividade-edit-form p-4 bg-white rounded shadow-sm">
+  <h2 class="mb-4">{{ isEditing ? 'Editar Atividade' : 'Nova Atividade' }}</h2>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="nomeAtividade" class="form-label">Nome da Atividade</label>
+      <input id="nomeAtividade" type="text" class="form-control" formControlName="nomeAtividade" required />
+      <div *ngIf="form.get('nomeAtividade')?.invalid && form.get('nomeAtividade')?.touched" class="text-danger small">
+        Nome da Atividade é obrigatório
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea id="descricao" class="form-control" formControlName="descricao" rows="3" required></textarea>
+      <div *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" class="text-danger small">
+        Descrição é obrigatória
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="classificacao" class="form-label">Classificação</label>
+      <select id="classificacao" class="form-select" formControlName="classificacao" required>
+        <option *ngFor="let option of classificacaoOptions" [value]="option.value">{{ option.label }}</option>
+      </select>
+      <div *ngIf="form.get('classificacao')?.invalid && form.get('classificacao')?.touched" class="text-danger small">
+        Classificação é obrigatória
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="historico" class="form-label">Histórico</label>
+      <input id="historico" type="text" class="form-control" formControlName="historico" required />
+    </div>
+
+    <div class="col-md-6">
+      <label for="fornecedor" class="form-label">Fornecedor</label>
+      <input id="fornecedor" type="text" class="form-control" formControlName="fornecedor" required />
+      <div *ngIf="form.get('fornecedor')?.invalid && form.get('fornecedor')?.touched" class="text-danger small">
+        Fornecedor é obrigatório
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="ficha" class="form-label">Ficha</label>
+      <input id="ficha" type="text" class="form-control" formControlName="ficha" required />
+      <div *ngIf="form.get('ficha')?.invalid && form.get('ficha')?.touched" class="text-danger small">
+        Ficha é obrigatória
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <label for="gastoTotalAno" class="form-label">Gasto Total por Ano</label>
+      <input id="gastoTotalAno" type="number" class="form-control" formControlName="gastoTotalAno" required min="0" />
+      <div *ngIf="form.get('gastoTotalAno')?.invalid && form.get('gastoTotalAno')?.touched" class="text-danger small">
+        Gasto Total por Ano é obrigatório e deve ser maior ou igual a zero
+      </div>
+    </div>
+  </div>
+
+  <div formArrayName="elementos" class="mt-4">
+    <h3>Elementos</h3>
+    <button type="button" class="btn btn-primary mb-3" (click)="adicionarElemento()">Adicionar Elemento</button>
+
+    <div *ngFor="let elemento of elementos.controls; let i = index" [formGroupName]="i" class="card p-3 mb-3 shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>Elemento {{ i + 1 }}</h5>
+        <button type="button" class="btn btn-danger btn-sm" (click)="removerElemento(i)">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="elemento-{{i}}" class="form-label">Elemento</label>
+          <input id="elemento-{{i}}" type="text" class="form-control" formControlName="elemento" required />
+        </div>
+        <div class="col-md-3">
+          <label for="dotacao-{{i}}" class="form-label">Dotação</label>
+          <input id="dotacao-{{i}}" type="text" class="form-control" formControlName="dotacao" required />
+        </div>
+        <div class="col-md-3">
+          <label for="ficha-{{i}}" class="form-label">Ficha</label>
+          <input id="ficha-{{i}}" type="text" class="form-control" formControlName="ficha" required />
+        </div>
+        <div class="col-md-3">
+          <label for="recurso-{{i}}" class="form-label">Recurso</label>
+          <input id="recurso-{{i}}" type="text" class="form-control" formControlName="recurso" required />
+        </div>
+        <div class="col-md-3">
+          <label for="orcamentoInicial-{{i}}" class="form-label">Orçamento Inicial</label>
+          <input id="orcamentoInicial-{{i}}" type="number" class="form-control" formControlName="orcamentoInicial" required min="0" />
+        </div>
+        <div class="col-md-3">
+          <label for="orcamentoAtualizado-{{i}}" class="form-label">Orçamento Atualizado</label>
+          <input id="orcamentoAtualizado-{{i}}" type="number" class="form-control" formControlName="orcamentoAtualizado" required min="0" />
+        </div>
+        <div class="col-md-3">
+          <label for="previsaoGastosAno-{{i}}" class="form-label">Previsão de Gastos/Ano</label>
+          <input id="previsaoGastosAno-{{i}}" type="number" class="form-control" formControlName="previsaoGastosAno" required min="0" />
+        </div>
+        <div class="col-md-3">
+          <label for="diferencaPrevistaAno-{{i}}" class="form-label">Diferença Prevista/Ano</label>
+          <input id="diferencaPrevistaAno-{{i}}" type="number" class="form-control" formControlName="diferencaPrevistaAno" required />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-3">
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Salvar</button>
+    <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
+  </div>
+</form>

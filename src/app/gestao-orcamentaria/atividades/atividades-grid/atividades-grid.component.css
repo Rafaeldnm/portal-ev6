@@ -1,0 +1,36 @@
+.sub-grid-container {
+  padding: 16px;
+  border-left: 6px solid #ef6c00; /* laranja escuro para destaque */
+  margin-top: 0px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(239, 108, 0, 0.3);
+  font-weight: 500;
+  font-size: 14px;
+  color: #e65100;
+}
+
+.label-green {
+  color: green;
+  font-weight: 600;
+}
+
+.label-red {
+  color: red;
+  font-weight: 600;
+}
+
+
+tr.detail-row {
+  height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  margin: 0;
+  display: none;
+}
+
+tr.detail-row.expanded {
+  height: auto;
+  display: table-row;
+}

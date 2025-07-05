@@ -1,0 +1,97 @@
+.navbar {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  height: 56px;
+}
+
+.voltar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.voltar:hover {
+  color: #ea580c;
+}
+
+.voltar i {
+  font-size: 16px;
+}
+
+h1 {
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  padding-right: 150px; /* Compensa o espaço do botão voltar */
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: absolute;
+  right: 24px;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.nav-links a:hover {
+  color: #ea580c;
+}
+
+.nav-links a.active {
+  color: #ea580c;
+  background: #fff7ed;
+}
+
+.nav-links i {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .voltar span {
+    display: none;
+  }
+
+  h1 {
+    font-size: 14px;
+    padding-right: 0;
+  }
+
+  .nav-links {
+    gap: 16px;
+    right: 16px;
+  }
+
+  .nav-links a span {
+    display: none;
+  }
+}

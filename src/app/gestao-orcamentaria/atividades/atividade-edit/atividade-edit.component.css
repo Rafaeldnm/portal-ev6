@@ -1,0 +1,77 @@
+.atividade-edit-form {
+  max-width: 1200px;
+  margin: 20px auto;
+}
+
+mat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0;
+  box-shadow: none;
+  background: none;
+}
+
+mat-card-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 0;
+}
+
+mat-form-field.full-width {
+  flex: 1 1 45%;
+  min-width: 200px;
+  background: white;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.elementos-container {
+  flex: 1 1 100%;
+  margin-top: 16px;
+}
+
+.elemento-item {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  background: white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.elemento-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.elemento-item mat-form-field {
+  flex: 1 1 18%;
+  min-width: 150px;
+  background: white;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+button {
+  margin-bottom: 16px;
+  box-shadow: none;
+  text-transform: none;
+  font-weight: 600;
+  background-color: #ef6c00;
+  color: white;
+}
+
+button:hover {
+  background-color: #d65a00;
+}
