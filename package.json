@@ -24,6 +24,7 @@
     "@types/chart.js": "^4.0.1",
     "bootstrap": "^5.3.5",
     "chart.js": "^4.4.9",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "ngx-currency": "^4.0.0",
     "ngx-mask": "^19.0.7",
     "rxjs": "~7.8.0",

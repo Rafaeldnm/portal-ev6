@@ -5,6 +5,7 @@ import { InvestimentosService, Investimento } from '../services/investimentos.se
 import { IpcaService } from '../services/ipca.service';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-graficos',
@@ -128,6 +129,8 @@ export class GraficosComponent implements OnInit {
       this.graficoBarras.destroy();
     }
 
+    Chart.register(ChartDataLabels);
+
     const configBarras: ChartConfiguration = {
       type: 'bar',
       data: this.dadosGraficoBarras,
@@ -155,6 +158,27 @@ export class GraficosComponent implements OnInit {
           }
         },
         plugins: {
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            color: '#000', // cor do texto
+            font: {
+              weight: 'bold'
+            },
+            formatter: (value: any) => {
+              if (this.categoriaSelecionada) {
+                switch (this.categoriaSelecionada.TipoValor) {
+                  case 'Financeiro':
+                    return `${this.formatarValorFinanceiro(value)}`;
+                  case 'Percentual':
+                    return `${value}%`;
+                  default:
+                    return value;
+                }
+              }
+              return value;
+            }
+          },
           legend: {
             display: true,
             position: 'top',
@@ -192,6 +216,18 @@ export class GraficosComponent implements OnInit {
       this.graficoBarras = new Chart(ctxBarras, configBarras);
     }
   }
+
+    // Função para formatar valores financeiros com "milhão/milhões"
+    public formatarValorFinanceiro(valor: number): string {
+      if (valor >= 1000000) {
+        const valorMilhao = valor / 1000000;
+        const valorFormatado = valorMilhao.toFixed(1).replace('.', ',');
+        const plural = valorMilhao >= 2 ? 'milhões' : 'milhão';
+        return `R$ ${valorFormatado} ${plural}`;
+      } else {
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      }
+    }
 
   exportarGrafico(): void {
     const canvas = document.getElementById('graficoBarras') as HTMLCanvasElement;
