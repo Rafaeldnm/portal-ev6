@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavbarGestaoOrcamentariaComponent } from './navbar/navbar.component';
 import { AtividadesGridComponent } from './atividades/atividades-grid/atividades-grid.component';
 import { AtividadeEditComponent } from './atividades/atividade-edit/atividade-edit.component';
+import { ItemModalComponent } from './atividades/item-modal/item-modal.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
@@ -22,7 +23,8 @@ import { GestaoOrcamentariaRoutingModule } from './gestao-orcamentaria-routing.m
     NavbarGestaoOrcamentariaComponent,
     AtividadesGridComponent,
     AtividadeEditComponent,
-    DashboardComponent
+    DashboardComponent,
+    ItemModalComponent
   ],
   imports: [
     CommonModule,

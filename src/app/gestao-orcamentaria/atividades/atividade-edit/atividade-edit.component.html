@@ -77,8 +77,8 @@
           <input id="elemento-{{i}}" type="text" class="form-control" formControlName="elemento" required />
         </div>
         <div class="col-md-3">
-          <label for="dotacao-{{i}}" class="form-label">Dotação</label>
-          <input id="dotacao-{{i}}" type="text" class="form-control" formControlName="dotacao" required />
+          <label for="descricao-{{i}}" class="form-label">Descrição</label>
+          <input id="descricao-{{i}}" type="text" class="form-control" formControlName="descricao" required />
         </div>
         <div class="col-md-3">
           <label for="ficha-{{i}}" class="form-label">Ficha</label>
@@ -97,13 +97,14 @@
           <input id="orcamentoAtualizado-{{i}}" type="number" class="form-control" formControlName="orcamentoAtualizado" required min="0" />
         </div>
         <div class="col-md-3">
-          <label for="previsaoGastosAno-{{i}}" class="form-label">Previsão de Gastos/Ano</label>
-          <input id="previsaoGastosAno-{{i}}" type="number" class="form-control" formControlName="previsaoGastosAno" required min="0" />
-        </div>
-        <div class="col-md-3">
           <label for="diferencaPrevistaAno-{{i}}" class="form-label">Diferença Prevista/Ano</label>
           <input id="diferencaPrevistaAno-{{i}}" type="number" class="form-control" formControlName="diferencaPrevistaAno" required />
         </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-info mt-4" (click)="abrirModalItens(i)">Itens</button>
+        </div>
+
+
       </div>
     </div>
   </div>
@@ -112,4 +113,12 @@
     <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Salvar</button>
     <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancelar</button>
   </div>
+
 </form>
+
+<app-item-modal
+*ngIf="modalAberto"
+[itens]="itensModal"
+(itensChange)="atualizarItens($event)"
+(close)="fecharModal()"
+></app-item-modal>

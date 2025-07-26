@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Item } from '../item-modal/item-modal.component';
 
 @Component({
   selector: 'app-atividade-edit',
@@ -16,6 +17,10 @@ export class AtividadeEditComponent implements OnInit {
     { value: 'Midia', label: 'Mídia' },
     { value: 'Obrigatorio', label: 'Obrigatório' }
   ];
+
+  modalAberto = false;
+  itensModal: Item[] = [];
+  indiceElementoModal: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -53,13 +58,14 @@ export class AtividadeEditComponent implements OnInit {
         elementos: [
           {
             elemento: 'Elemento 1',
-            dotacao: 'Dotação 1',
+            descricao: 'Descrição 1',
             ficha: 'Ficha 1',
             recurso: 'Recurso 1',
             orcamentoInicial: 100000,
             orcamentoAtualizado: 110000,
             previsaoGastosAno: 105000,
-            diferencaPrevistaAno: 5000
+            diferencaPrevistaAno: 5000,
+            itens: []
           }
         ]
       };
@@ -75,13 +81,14 @@ export class AtividadeEditComponent implements OnInit {
   setElementos(elementos: any[]) {
     const elementosFGs = elementos.map(el => this.fb.group({
       elemento: [el.elemento, Validators.required],
-      dotacao: [el.dotacao, Validators.required],
+      descricao: [el.descricao, Validators.required],
       ficha: [el.ficha, Validators.required],
       recurso: [el.recurso, Validators.required],
       orcamentoInicial: [el.orcamentoInicial, [Validators.required, Validators.min(0)]],
       orcamentoAtualizado: [el.orcamentoAtualizado, [Validators.required, Validators.min(0)]],
       previsaoGastosAno: [el.previsaoGastosAno, [Validators.required, Validators.min(0)]],
-      diferencaPrevistaAno: [el.diferencaPrevistaAno, [Validators.required]]
+      diferencaPrevistaAno: [el.diferencaPrevistaAno, [Validators.required]],
+      itens: [el.itens || []]
     }));
     const elementosFormArray = this.fb.array(elementosFGs);
     this.form.setControl('elementos', elementosFormArray);
@@ -90,18 +97,44 @@ export class AtividadeEditComponent implements OnInit {
   adicionarElemento() {
     this.elementos.push(this.fb.group({
       elemento: ['', Validators.required],
-      dotacao: ['', Validators.required],
+      descricao: ['', Validators.required],
       ficha: ['', Validators.required],
       recurso: ['', Validators.required],
       orcamentoInicial: [0, [Validators.required, Validators.min(0)]],
       orcamentoAtualizado: [0, [Validators.required, Validators.min(0)]],
       previsaoGastosAno: [0, [Validators.required, Validators.min(0)]],
-      diferencaPrevistaAno: [0, Validators.required]
+      diferencaPrevistaAno: [0, Validators.required],
+      itens: [[]]
     }));
   }
 
   removerElemento(index: number) {
     this.elementos.removeAt(index);
+  }
+
+  abrirModalItens(index: number): void {
+    this.indiceElementoModal = index;
+    const elementoGroup = this.elementos.at(index);
+    const itens = elementoGroup.get('itens')?.value;
+    this.itensModal = Array.isArray(itens) ? itens : [];
+    this.modalAberto = true;
+    // Força a detecção de mudanças se necessário (exemplo: se usar ChangeDetectorRef)
+  }
+
+
+  fecharModal(): void {
+    this.modalAberto = false;
+    this.indiceElementoModal = null;
+  }
+
+  atualizarItens(itens: any): void {
+    if (this.indiceElementoModal !== null) {
+      if (Array.isArray(itens)) {
+        const elementoGroup = this.elementos.at(this.indiceElementoModal);
+        elementoGroup.get('itens')?.setValue(itens);
+      }
+    }
+    this.fecharModal();
   }
 
   onSubmit() {

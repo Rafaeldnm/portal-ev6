@@ -1,0 +1,110 @@
+<div class="modal-backdrop fade show"> </div>
+<div class="modal-container">
+  <h2>Itens do Elemento</h2>
+  <form [formGroup]="form" *ngIf="form">
+    <div formArrayName="itensArray">
+      <div *ngFor="let item of itensArray.controls; let i = index" [formGroupName]="i" class="item-card row gx-3 gy-2 align-items-center">
+        <div class="item-header col-12 d-flex justify-content-between align-items-center">
+          <h3>Item {{ i + 1 }}</h3>
+          <button type="button" (click)="removeItem(i)" class="btn btn-danger btn-sm">Remover</button>
+        </div>
+        <div class="item-fields col-12 row gx-3 gy-2">
+          <div class="col-md-4">
+            <label>Descrição</label>
+            <input type="text" formControlName="descricao" required class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label>Tipo de gasto</label>
+            <select formControlName="tipoGasto" required class="form-select">
+              <option *ngFor="let tipo of tiposGasto" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label>Classificação</label>
+            <select formControlName="classificacao" required class="form-select">
+              <option *ngFor="let c of classificacoes" [value]="c">{{ c }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label>Histórico</label>
+            <input type="text" formControlName="historico" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label>Fornecedor</label>
+            <input type="text" formControlName="fornecedor" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label>Fonte</label>
+            <input type="text" formControlName="fonte" class="form-control" />
+          </div>
+          <div formGroupName="valor" class="valor-group col-12 row gx-3 gy-2">
+            <div class="col-md-3 d-flex flex-column">
+              <label>Janeiro</label>
+              <div class="d-flex align-items-center">
+                <input type="number" formControlName="janeiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+                <button type="button" class="btn btn-sm btn-outline-primary ms-2 mb-2" (click)="replicateToAllMonths(i)" title="Replicar para todos os meses">⇄</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label>Fevereiro</label>
+              <input type="number" formControlName="fevereiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Março</label>
+              <input type="number" formControlName="marco" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Abril</label>
+              <input type="number" formControlName="abril" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Maio</label>
+              <input type="number" formControlName="maio" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Junho</label>
+              <input type="number" formControlName="junho" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Julho</label>
+              <input type="number" formControlName="julho" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Agosto</label>
+              <input type="number" formControlName="agosto" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Setembro</label>
+              <input type="number" formControlName="setembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Outubro</label>
+              <input type="number" formControlName="outubro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Novembro</label>
+              <input type="number" formControlName="novembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Dezembro</label>
+              <input type="number" formControlName="dezembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label>Períodos Anteriores</label>
+              <input type="number" formControlName="periodosAnteriores" (input)="atualizarTotal(i)" valorMask class="form-control" />
+            </div>
+            <div class="col-md-3 d-flex flex-column order-last">
+              <label>Total</label>
+              <input type="number" formControlName="total" [attr.disabled]="true" class="form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="addItem()">Adicionar Item</button>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-success" (click)="save()">Salvar</button>
+      <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+    </div>
+  </form>
+</div>

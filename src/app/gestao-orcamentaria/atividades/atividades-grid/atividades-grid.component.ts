@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 interface ElementoSubGrid {
   elemento: string;
-  dotacao: string;
+  descricao: string;
   ficha: string;
   recurso: string;
   orcamentoInicial: number;
@@ -48,7 +48,7 @@ export class AtividadesGridComponent implements OnInit {
 
   displayedColumnsSubGrid: string[] = [
     'elemento',
-    'dotacao',
+    'descricao',
     'ficha',
     'recurso',
     'orcamentoInicial',
@@ -79,7 +79,7 @@ export class AtividadesGridComponent implements OnInit {
       elementosSubGrid: [
         {
           elemento: 'Elemento 1',
-          dotacao: 'Dotação 1',
+          descricao: 'Descrição 1',
           ficha: 'Ficha 1',
           recurso: 'Recurso 1',
           orcamentoInicial: 100000,
@@ -89,7 +89,7 @@ export class AtividadesGridComponent implements OnInit {
         },
         {
           elemento: 'Elemento 2',
-          dotacao: 'Dotação 2',
+          descricao: 'Descrição 2',
           ficha: 'Ficha 2',
           recurso: 'Recurso 2',
           orcamentoInicial: 200000,
@@ -115,7 +115,7 @@ export class AtividadesGridComponent implements OnInit {
       elementosSubGrid: [
         {
           elemento: 'Elemento A',
-          dotacao: 'Dotação A',
+          descricao: 'Descrição A',
           ficha: 'Ficha A',
           recurso: 'Recurso A',
           orcamentoInicial: 25000,
