@@ -11,6 +11,7 @@ interface ElementoSubGrid {
   orcamentoAtualizado: number;
   previsaoGastosAno: number;
   diferencaPrevistaAno: number;
+  itens?: any[]; // Assuming itens property to hold items for modal
 }
 
 interface Atividade {
@@ -61,6 +62,9 @@ export class AtividadesGridComponent implements OnInit {
   dataSource = new MatTableDataSource<Atividade>();
   linhasExpandidas: Set<Atividade> = new Set<Atividade>();
 
+  modalAberto: boolean = false;
+  itensModal: any[] = [];
+
   // Mock data
   mockAtividades: Atividade[] = [
     {
@@ -85,7 +89,8 @@ export class AtividadesGridComponent implements OnInit {
           orcamentoInicial: 100000,
           orcamentoAtualizado: 110000,
           previsaoGastosAno: 105000,
-          diferencaPrevistaAno: 5000
+          diferencaPrevistaAno: 5000,
+          itens: [ /* example items array */ ]
         },
         {
           elemento: 'Elemento 2',
@@ -95,7 +100,8 @@ export class AtividadesGridComponent implements OnInit {
           orcamentoInicial: 200000,
           orcamentoAtualizado: 210000,
           previsaoGastosAno: 205000,
-          diferencaPrevistaAno: 5000
+          diferencaPrevistaAno: 5000,
+          itens: [ /* example items array */ ]
         }
       ]
     },
@@ -121,7 +127,8 @@ export class AtividadesGridComponent implements OnInit {
           orcamentoInicial: 25000,
           orcamentoAtualizado: 26000,
           previsaoGastosAno: 25500,
-          diferencaPrevistaAno: 500
+          diferencaPrevistaAno: 500,
+          itens: [ /* example items array */ ]
         }
       ]
     }
@@ -169,5 +176,21 @@ export class AtividadesGridComponent implements OnInit {
 
   estaExpandido(elemento: Atividade): boolean {
     return this.linhasExpandidas.has(elemento);
+  }
+
+  abrirModalItens(elemento: ElementoSubGrid) {
+    this.modalAberto = true;
+    this.itensModal = elemento.itens || [];
+  }
+
+  fecharModal() {
+    this.modalAberto = false;
+    this.itensModal = [];
+  }
+
+  atualizarItens(itensAtualizados: any[]) {
+    // Atualize os itens conforme necessário, por exemplo, atualizar o mockAtividades ou chamar um serviço
+    console.log('Itens atualizados:', itensAtualizados);
+    this.fecharModal();
   }
 }

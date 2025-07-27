@@ -127,10 +127,9 @@
 
             <ng-container matColumnDef="acoes">
               <th mat-header-cell *matHeaderCellDef> Ações </th>
-              <td mat-cell *matCellDef="let sub">
-                <!-- Aqui você pode adicionar botões ou ações para o sub-grid -->
-                <button mat-icon-button color="primary">
-                  <mat-icon>edit</mat-icon>
+            <td mat-cell *matCellDef="let sub">
+                <button class="btn btn-primary btn-sm" (click)="abrirModalItens(sub)">
+                  Itens
                 </button>
               </td>
             </ng-container>
@@ -144,3 +143,10 @@
 
   </table>
 </div>
+
+<app-item-modal
+*ngIf="modalAberto"
+[itens]="itensModal"
+(itensChange)="atualizarItens($event)"
+(close)="fecharModal()"
+></app-item-modal>
