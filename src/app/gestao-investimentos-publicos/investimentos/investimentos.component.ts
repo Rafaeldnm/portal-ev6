@@ -1,10 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { InvestimentosService, Investimento } from '../services/investimentos.service';
 import { CategoriasService, Categoria } from '../services/categorias.service';
 import { MensagemService } from '../services/mensagem.service';
 import { IpcaService } from '../services/ipca.service';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { ValorMaskDirective } from '../directives/valor-mask.directive';
+
+interface NovoInvestimento {
+  CategoriaId: number;
+  Valor: number | string;
+  Ano: number;
+  Descricao: string;
+}
 
 @Component({
   selector: 'app-investimentos',
@@ -12,10 +20,12 @@ import { switchMap } from 'rxjs/operators';
   styleUrls: ['./investimentos.component.css']
 })
 export class InvestimentosComponent implements OnInit {
+  @ViewChild(ValorMaskDirective) valorMaskDirective!: ValorMaskDirective;
+
   investimentos: Investimento[] = [];
   categorias: Categoria[] = [];
   modalAberto = false;
-  novoInvestimento = {
+  novoInvestimento: NovoInvestimento = {
     CategoriaId: 0,
     Valor: 0,
     Ano: new Date().getFullYear(),
@@ -74,6 +84,14 @@ export class InvestimentosComponent implements OnInit {
     };
     this.investimentoParaEditar = null;
     this.categoriaSelecionada = null;
+
+    // Refresh the mask formatting on the input after resetting the value
+    setTimeout(() => {
+      if (this.valorMaskDirective) {
+        this.valorMaskDirective.formatarInput();
+      }
+    }, 0);
+
   }
 
   fecharModal(): void {
@@ -125,19 +143,39 @@ export class InvestimentosComponent implements OnInit {
       return;
     }
 
-    if (!this.validarValor(this.novoInvestimento.Valor, this.categoriaSelecionada.TipoValor)) {
+    let valorNumerico: number;
+
+    if (typeof this.novoInvestimento.Valor === 'string') {
+      valorNumerico = Number(
+        this.novoInvestimento.Valor
+          .toString()
+          .replace(/\./g, '')   // remove pontos de milhar
+          .replace(',', '.')    // troca vírgula decimal por ponto
+      );
+    } else {
+      valorNumerico = this.novoInvestimento.Valor;
+    }
+
+    if (!this.validarValor(valorNumerico, this.categoriaSelecionada.TipoValor)) {
       this.mensagemService.mostrarErro('Valor inválido para o tipo selecionado');
       return;
     }
 
+    this.novoInvestimento.Valor = valorNumerico;
+
+    const investimentoParaSalvar = {
+      ...this.novoInvestimento,
+      Valor: valorNumerico
+    };
+
     const operacao = this.investimentoParaEditar
-      ? this.investimentosService.atualizarInvestimento(this.investimentoParaEditar.Id, this.novoInvestimento)
-      : this.investimentosService.adicionarInvestimento(this.novoInvestimento);
+      ? this.investimentosService.atualizarInvestimento(this.investimentoParaEditar.Id, investimentoParaSalvar)
+      : this.investimentosService.adicionarInvestimento(investimentoParaSalvar);
 
     operacao.pipe(
       switchMap(() => {
         if (this.categoriaSelecionada?.TipoValor === 'Financeiro') {
-          return this.ipcaService.calcularValorCorrigido(this.novoInvestimento.Valor, this.novoInvestimento.Ano);
+          return this.ipcaService.calcularValorCorrigido(valorNumerico, this.novoInvestimento.Ano);
         }
         return of(null);
       })

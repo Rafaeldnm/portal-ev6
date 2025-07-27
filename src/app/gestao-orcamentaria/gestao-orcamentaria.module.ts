@@ -17,6 +17,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DashboardComponent } from 'src/app/gestao-orcamentaria/dashboard/dashboard.component';
 import { GestaoOrcamentariaRoutingModule } from './gestao-orcamentaria-routing.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { GestaoOrcamentariaRoutingModule } from './gestao-orcamentaria-routing.m
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatNativeDateModule,
-    GestaoOrcamentariaRoutingModule
+    GestaoOrcamentariaRoutingModule,
+    SharedModule
   ],
   exports: [
     NavbarGestaoOrcamentariaComponent

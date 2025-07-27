@@ -7,27 +7,26 @@ import { CategoriasComponent } from './categorias/categorias.component';
 import { InvestimentosComponent } from './investimentos/investimentos.component';
 import { GraficosComponent } from './graficos/graficos.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { ValorMaskDirective } from './directives/valor-mask.directive';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
     CategoriasComponent,
     InvestimentosComponent,
     GraficosComponent,
-    NavbarComponent,
-    ValorMaskDirective
+    NavbarComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    SharedModule
   ],
   exports: [
     CategoriasComponent,
     InvestimentosComponent,
     GraficosComponent,
-    NavbarComponent,
-    ValorMaskDirective
+    NavbarComponent
   ]
 })
 export class GestaoInvestimentosModule { }

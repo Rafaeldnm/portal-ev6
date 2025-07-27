@@ -41,61 +41,67 @@
             <div class="col-md-3 d-flex flex-column">
               <label>Janeiro</label>
               <div class="d-flex align-items-center">
-                <input type="number" formControlName="janeiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+                <input type="text" formControlName="janeiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
                 <button type="button" class="btn btn-sm btn-outline-primary ms-2 mb-2" (click)="replicateToAllMonths(i)" title="Replicar para todos os meses">⇄</button>
               </div>
             </div>
             <div class="col-md-3">
               <label>Fevereiro</label>
-              <input type="number" formControlName="fevereiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="fevereiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Março</label>
-              <input type="number" formControlName="marco" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="marco" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Abril</label>
-              <input type="number" formControlName="abril" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="abril" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Maio</label>
-              <input type="number" formControlName="maio" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="maio" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Junho</label>
-              <input type="number" formControlName="junho" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="junho" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Julho</label>
-              <input type="number" formControlName="julho" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="julho" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Agosto</label>
-              <input type="number" formControlName="agosto" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="agosto" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Setembro</label>
-              <input type="number" formControlName="setembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="setembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Outubro</label>
-              <input type="number" formControlName="outubro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="outubro" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Novembro</label>
-              <input type="number" formControlName="novembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="novembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Dezembro</label>
-              <input type="number" formControlName="dezembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text"
+                formControlName="dezembro"
+                valorMask
+                tipoValor="Financeiro"
+                class="form-control"
+                required
+              />
             </div>
             <div class="col-md-3">
               <label>Períodos Anteriores</label>
-              <input type="number" formControlName="periodosAnteriores" (input)="atualizarTotal(i)" valorMask class="form-control" />
+              <input type="text" formControlName="periodosAnteriores" valorMask (input)="atualizarTotal(i)" class="form-control" />
             </div>
             <div class="col-md-3 d-flex flex-column order-last">
               <label>Total</label>
-              <input type="number" formControlName="total" [attr.disabled]="true" class="form-control" />
+              <input type="text" formControlName="total" valorMask tipoValor="Financeiro" [attr.disabled]="true" class="form-control" />
             </div>
           </div>
         </div>

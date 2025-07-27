@@ -107,7 +107,10 @@ export class ItemModalComponent implements OnInit {
     const valorGroup = this.itensArray.at(index).get('valor') as FormGroup;
     const total = Object.keys(valorGroup.controls)
       .filter(key => key !== 'total')
-      .reduce((sum, key) => sum + (valorGroup.get(key)?.value || 0), 0);
+      .reduce((sum, key) => {
+        const val = valorGroup.get(key)?.value || 0;
+        return sum + (typeof val === 'number' ? val : 0);
+      }, 0);
     valorGroup.get('total')?.setValue(total, { emitEvent: false });
   }
 
