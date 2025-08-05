@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Item } from '../item-modal/item-modal.component';
+import { Item } from '../../models/item.model';
+import { AtividadesService } from '../../services/atividades.service';
+import { Atividade } from 'src/app/gestao-orcamentaria/models/atividade.model';
+import { MensagemService } from 'src/app/gestao-investimentos-publicos/services/mensagem.service';
 
 @Component({
   selector: 'app-atividade-edit',
@@ -10,7 +13,7 @@ import { Item } from '../item-modal/item-modal.component';
 })
 export class AtividadeEditComponent implements OnInit {
   form: FormGroup;
-  isEditing = false;
+  editandoAtividade = false;
   atividadeId: number | null = null;
 
   classificacaoOptions = [
@@ -19,60 +22,78 @@ export class AtividadeEditComponent implements OnInit {
   ];
 
   modalAberto = false;
+  atividade: Atividade | null = null;
   itensModal: Item[] = [];
   indiceElementoModal: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private atividadesService: AtividadesService,
+    private mensagemService: MensagemService
   ) {
     this.form = this.fb.group({
       nomeAtividade: ['', Validators.required],
       descricao: ['', Validators.required],
-      classificacao: ['', Validators.required],
-      historico: [''],
-      fornecedor: ['', Validators.required],
-      ficha: ['', Validators.required],
-      gastoTotalAno: [0, [Validators.required, Validators.min(0)]],
       elementos: this.fb.array([])
     });
   }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
+
     if (id) {
-      this.isEditing = true;
+      this.editandoAtividade = true;
       this.atividadeId = +id;
-      // TODO: Load activity data when we implement the service
-      // this.loadAtividade(this.atividadeId);
-      // For now, mock loading data from route or service
-      const mockData = {
-        nomeAtividade: 'Mock Atividade',
-        descricao: 'Descrição da atividade mock',
-        classificacao: 'Midia',
-        historico: 'Histórico mock',
-        fornecedor: 'Fornecedor mock',
-        ficha: '123',
-        gastoTotalAno: 1000,
-        elementos: [
-          {
-            elemento: 'Elemento 1',
-            descricao: 'Descrição 1',
-            ficha: 'Ficha 1',
-            recurso: 'Recurso 1',
-            orcamentoInicial: 100000,
-            orcamentoAtualizado: 110000,
-            previsaoGastosAno: 105000,
-            diferencaPrevistaAno: 5000,
-            itens: []
-          }
-        ]
-      };
-      this.form.patchValue(mockData);
-      this.setElementos(mockData.elementos);
+      this.carregarAtividade(this.atividadeId);
     }
   }
+
+  async carregarAtividade(id: number) {
+    this.atividadesService.recuperarAtividade(id).subscribe({
+      next: (atividade) => {
+        this.atividade = atividade;
+
+        this.form.patchValue({
+          nomeAtividade: atividade.NomeAtividade,
+          descricao: atividade.Descricao
+        });
+        this.setElementos(atividade.Elementos);
+
+        console.log(atividade);
+      },
+      error: (erro) => {
+        this.mensagemService.mostrarErro('Erro ao carregar categoria');
+        console.error('Erro ao carregar categoria:', erro);
+      }
+    });
+
+    // const atividades$ = this.atividadesService.listarAtividades();
+    // const atividades = await atividades$.toPromise();
+    // const atividade = atividades.find((a: any) => a.id === id);
+    // if (atividade) {
+      // this.form.patchValue({
+      //   nomeAtividade: atividade.nomeAtividade,
+      //   descricao: atividade.descricao
+      // });
+      // this.setElementos(atividade.elementos);
+    // }
+  }
+
+  // async carregarAtividade(id: number) {
+
+  //   const atividades$ = this.atividadesService.listarAtividades();
+  //   const atividades = await atividades$.toPromise();
+  //   const atividade = atividades.find((a: any) => a.id === id);
+  //   if (atividade) {
+  //     this.form.patchValue({
+  //       nomeAtividade: atividade.nomeAtividade,
+  //       descricao: atividade.descricao
+  //     });
+  //     this.setElementos(atividade.elementos);
+  //   }
+  // }
 
   get elementos(): FormArray {
     return this.form.get('elementos') as FormArray;
@@ -80,15 +101,37 @@ export class AtividadeEditComponent implements OnInit {
 
   setElementos(elementos: any[]) {
     const elementosFGs = elementos.map(el => this.fb.group({
-      elemento: [el.elemento, Validators.required],
-      descricao: [el.descricao, Validators.required],
-      ficha: [el.ficha, Validators.required],
-      recurso: [el.recurso, Validators.required],
-      orcamentoInicial: [el.orcamentoInicial, [Validators.required, Validators.min(0)]],
-      orcamentoAtualizado: [el.orcamentoAtualizado, [Validators.required, Validators.min(0)]],
-      previsaoGastosAno: [el.previsaoGastosAno, [Validators.required, Validators.min(0)]],
-      diferencaPrevistaAno: [el.diferencaPrevistaAno, [Validators.required]],
-      itens: [el.itens || []]
+      titulo: [el.Titulo, Validators.required],
+      descricao: [el.Descricao, Validators.required],
+      ficha: [el.Ficha, Validators.required],
+      recurso: [el.Recurso, Validators.required],
+      orcamentoInicial: [el.OrcamentoInicial, [Validators.required, Validators.min(0)]],
+      orcamentoAtualizado: [el.OrcamentoAtualizado, [Validators.required, Validators.min(0)]],
+      diferencaPrevistaAno: [el.DiferencaPrevistaAno, [Validators.required]],
+      itens: this.fb.array(el.Itens?.map((item: any) => this.fb.group({
+        descricao: [item.Descricao, Validators.required],
+        tipoGasto: [item.TipoGasto, Validators.required],
+        classificacao: [item.Classificacao, Validators.required],
+        historico: [item.Historico],
+        fornecedor: [item.Fornecedor],
+        fonte: [item.Fonte],
+        valor: this.fb.group({
+          total: [{value: item.Valor?.Total || 0, disabled: true}],
+          periodosAnteriores: [item.Valor?.PeriodosAnteriores || 0],
+          janeiro: [item.Valor?.Janeiro || 0],
+          fevereiro: [item.Valor?.Fevereiro || 0],
+          marco: [item.Valor?.Marco || 0],
+          abril: [item.Valor?.Abril || 0],
+          maio: [item.Valor?.Maio || 0],
+          junho: [item.Valor?.Junho || 0],
+          julho: [item.Valor?.Julho || 0],
+          agosto: [item.Valor?.Agosto || 0],
+          setembro: [item.Valor?.Setembro || 0],
+          outubro: [item.Valor?.Outubro || 0],
+          novembro: [item.Valor?.Novembro || 0],
+          dezembro: [item.Valor?.Dezembro || 0],
+        })
+      }))) || this.fb.array([])
     }));
     const elementosFormArray = this.fb.array(elementosFGs);
     this.form.setControl('elementos', elementosFormArray);
@@ -96,7 +139,7 @@ export class AtividadeEditComponent implements OnInit {
 
   adicionarElemento() {
     this.elementos.push(this.fb.group({
-      elemento: ['', Validators.required],
+      titulo: ['', Validators.required],
       descricao: ['', Validators.required],
       ficha: ['', Validators.required],
       recurso: ['', Validators.required],
@@ -104,7 +147,7 @@ export class AtividadeEditComponent implements OnInit {
       orcamentoAtualizado: [0, [Validators.required, Validators.min(0)]],
       previsaoGastosAno: [0, [Validators.required, Validators.min(0)]],
       diferencaPrevistaAno: [0, Validators.required],
-      itens: [[]]
+      itens: this.fb.array([])
     }));
   }
 
@@ -131,17 +174,101 @@ export class AtividadeEditComponent implements OnInit {
     if (this.indiceElementoModal !== null) {
       if (Array.isArray(itens)) {
         const elementoGroup = this.elementos.at(this.indiceElementoModal);
-        elementoGroup.get('itens')?.setValue(itens);
+        const itensFormArray = elementoGroup.get('itens') as FormArray;
+        itensFormArray.clear();
+        let somaTotal = 0;
+        itens.forEach((item: any) => {
+          itensFormArray.push(this.fb.group({
+            descricao: [item.descricao, Validators.required],
+            tipoGasto: [item.tipoGasto, Validators.required],
+            classificacao: [item.classificacao, Validators.required],
+            historico: [item.historico],
+            fornecedor: [item.fornecedor],
+            fonte: [item.fonte],
+            valor: this.fb.group({
+              total: [{value: item.valor?.total || 0, disabled: true}],
+              periodosAnteriores: [item.valor?.periodosAnteriores || 0],
+              janeiro: [item.valor?.janeiro || 0],
+              fevereiro: [item.valor?.fevereiro || 0],
+              marco: [item.valor?.marco || 0],
+              abril: [item.valor?.abril || 0],
+              maio: [item.valor?.maio || 0],
+              junho: [item.valor?.junho || 0],
+              julho: [item.valor?.julho || 0],
+              agosto: [item.valor?.agosto || 0],
+              setembro: [item.valor?.setembro || 0],
+              outubro: [item.valor?.outubro || 0],
+              novembro: [item.valor?.novembro || 0],
+              dezembro: [item.valor?.dezembro || 0],
+            })
+          }));
+          somaTotal += item.valor?.total || 0;
+        });
+        elementoGroup.get('previsaoGastosAno')?.setValue(somaTotal);
+        this.salvarAtividadeAtualizada();
       }
     }
     this.fecharModal();
   }
 
+  salvarAtividadeAtualizada(): void {
+    debugger;
+
+    if (this.form.valid && this.atividadeId !== null) {
+      const atividade = this.form.getRawValue();
+      atividade.id = this.atividadeId;
+      this.atividadesService.editarAtividade(atividade.id, atividade).subscribe({
+        next: (atividadeAtualizada) => {
+          this.mensagemService.mostrarSucesso(
+            `Atividade '${atividadeAtualizada.NomeAtividade}' foi atualizada com sucesso`
+          );
+        },
+        error: (erro) => {
+          this.mensagemService.mostrarErro(
+            erro.message || `Erro ao atualizar atividade '${this.atividade?.NomeAtividade}'`
+          );
+        }
+      });
+
+    }
+  }
+
   onSubmit() {
+    debugger;
+
     if (this.form.valid) {
-      const atividade = this.form.value;
-      // TODO: Save activity when we implement the service
-      // this.saveAtividade(atividade);
+      const atividade = this.form.getRawValue();
+      var editarAtividade = this.editandoAtividade && this.atividadeId !== null
+
+      if (editarAtividade) {
+        atividade.id = this.atividadeId;
+        this.atividadesService.editarAtividade(atividade.id, atividade).subscribe({
+          next: (atividadeAtualizada) => {
+            this.mensagemService.mostrarSucesso(
+              `Atividade '${atividadeAtualizada.NomeAtividade}' foi atualizada com sucesso`
+            );
+          },
+          error: (erro) => {
+            this.mensagemService.mostrarErro(
+              erro.message || `Erro ao atualizar atividade '${this.atividade?.NomeAtividade}'`
+            );
+          }
+        });
+      }
+      else { // Criar Atividade
+        this.atividadesService.addAtividade(atividade).subscribe({
+          next: (atividadeNova) => {
+            this.mensagemService.mostrarSucesso(
+              `Atividade '${atividadeNova.NomeAtividade}' foi criada com sucesso`
+            );
+          },
+          error: (erro) => {
+            this.mensagemService.mostrarErro(
+              erro.message || `Erro ao criar atividade '${atividade.NomeAtividade}'`
+            );
+          }
+        });
+      }
       this.router.navigateByUrl('/gestao-orcamentaria/atividades');
     }
   }

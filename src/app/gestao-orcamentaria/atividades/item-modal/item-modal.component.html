@@ -1,7 +1,7 @@
 <div class="modal-backdrop fade show"> </div>
 <div class="modal-container">
   <h2>Itens do Elemento</h2>
-  <form [formGroup]="form" *ngIf="form">
+  <form [formGroup]="formulario" *ngIf="formulario">
     <div formArrayName="itensArray">
       <div *ngFor="let item of itensArray.controls; let i = index" [formGroupName]="i" class="item-card row gx-3 gy-2 align-items-center">
         <div class="item-header col-12 d-flex justify-content-between align-items-center">
@@ -41,55 +41,61 @@
             <div class="col-md-3 d-flex flex-column">
               <label>Janeiro</label>
               <div class="d-flex align-items-center">
-                <input type="text" formControlName="janeiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+                <input type="text" formControlName="janeiro" class="form-control" />
                 <button type="button" class="btn btn-sm btn-outline-primary ms-2 mb-2" (click)="replicateToAllMonths(i)" title="Replicar para todos os meses">⇄</button>
               </div>
             </div>
             <div class="col-md-3">
               <label>Fevereiro</label>
-              <input type="text" formControlName="fevereiro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="fevereiro" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Março</label>
-              <input type="text" formControlName="marco" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="marco" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Abril</label>
-              <input type="text" formControlName="abril" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="abril" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Maio</label>
-              <input type="text" formControlName="maio" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="maio" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Junho</label>
-              <input type="text" formControlName="junho" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="junho" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Julho</label>
-              <input type="text" formControlName="julho" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input
+                type="text"
+                class="form-control"
+                [value]="formatarValor(formulario.get('valor.julho')?.value)"
+                (input)="onInputMonetario($event, 'julho', i)"
+                (blur)="formatarCampo('julho')"
+              />
             </div>
             <div class="col-md-3">
               <label>Agosto</label>
-              <input type="text" formControlName="agosto" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="agosto" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Setembro</label>
-              <input type="text" formControlName="setembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="setembro" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Outubro</label>
-              <input type="text" formControlName="outubro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="outubro" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Novembro</label>
-              <input type="text" formControlName="novembro" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="novembro" class="form-control" />
             </div>
             <div class="col-md-3">
               <label>Dezembro</label>
               <input type="text"
                 formControlName="dezembro"
-                valorMask
+
                 tipoValor="Financeiro"
                 class="form-control"
                 required
@@ -97,20 +103,21 @@
             </div>
             <div class="col-md-3">
               <label>Períodos Anteriores</label>
-              <input type="text" formControlName="periodosAnteriores" valorMask (input)="atualizarTotal(i)" class="form-control" />
+              <input type="text" formControlName="periodosAnteriores" class="form-control" />
             </div>
             <div class="col-md-3 d-flex flex-column order-last">
+
               <label>Total</label>
-              <input type="text" formControlName="total" valorMask tipoValor="Financeiro" [attr.disabled]="true" class="form-control" />
+              <input type="text" formControlName="total" [attr.disabled]="true" class="form-control" />
             </div>
           </div>
         </div>
       </div>
     </div>
-    <button type="button" class="btn btn-primary" (click)="addItem()">Adicionar Item</button>
+    <button type="button" class="btn btn-primary" (click)="adicionarItem()">Adicionar Item</button>
     <div class="modal-actions">
-      <button type="button" class="btn btn-success" (click)="save()">Salvar</button>
-      <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+      <button type="button" class="btn btn-success" (click)="salvar()">Salvar</button>
+      <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
     </div>
   </form>
 </div>

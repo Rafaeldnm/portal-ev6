@@ -1,34 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
-
-interface ElementoSubGrid {
-  elemento: string;
-  descricao: string;
-  ficha: string;
-  recurso: string;
-  orcamentoInicial: number;
-  orcamentoAtualizado: number;
-  previsaoGastosAno: number;
-  diferencaPrevistaAno: number;
-  itens?: any[]; // Assuming itens property to hold items for modal
-}
-
-interface Atividade {
-  id: number;
-  nomeAtividade: string;
-  descricao: string;
-  ficha: string;
-  orcamentoInicial: number;
-  orcamentoAtualizado: number;
-  previsaoGastosAno: number;
-  diferencaPrevista: number;
-  classificacao: 'Midia' | 'Obrigatorio';
-  historico: string;
-  fornecedor: string;
-  gastoTotalAno: number;
-  elementosSubGrid?: ElementoSubGrid[];
-}
+import { AtividadesService } from '../../services/atividades.service';
+import { Atividade } from '../../models/atividade.model';
+import { MensagemService } from 'src/app/gestao-investimentos-publicos/services/mensagem.service';
 
 @Component({
   selector: 'app-atividades-grid',
@@ -37,129 +12,123 @@ interface Atividade {
 })
 export class AtividadesGridComponent implements OnInit {
   displayedColumns: string[] = [
-    'expand',
-    'nomeAtividade',
-    'descricao',
-    'orcamentoInicial',
-    'orcamentoAtualizado',
-    'previsaoGastosAno',
-    'diferencaPrevista',
-    'acoes'
+    'Expand',
+    'NomeAtividade',
+    'Descricao',
+    'OrcamentoInicial',
+    'OrcamentoAtualizado',
+    'PrevisaoGastosAno',
+    'DiferencaPrevista',
+    'Acoes'
   ];
 
   displayedColumnsSubGrid: string[] = [
-    'elemento',
-    'descricao',
-    'ficha',
-    'recurso',
-    'orcamentoInicial',
-    'orcamentoAtualizado',
-    'previsaoGastosAno',
-    'diferencaPrevistaAno',
-    'acoes'
+    'Titulo',
+    'Descricao',
+    'Ficha',
+    'Recurso',
+    'OrcamentoInicial',
+    'OrcamentoAtualizado',
+    'PrevisaoGastosAno',
+    'DiferencaPrevistaAno',
+    'Acoes'
   ];
 
   dataSource = new MatTableDataSource<Atividade>();
+
+  // atividades: Atividade[] = [
+  //   {
+  //     id: 1,
+  //     nomeAtividade: 'Campanha Publicitária',
+  //     descricao: 'Campanha institucional no primeiro semestre',
+  //     ficha: '123',
+  //     orcamentoInicial: 100000,
+  //     orcamentoAtualizado: 120000,
+  //     previsaoGastosAno: 110000,
+  //     diferencaPrevista: 10000,
+  //     classificacao: 'Midia',
+  //     historico: 'Campanha aprovada em abril',
+  //     fornecedor: 'Agência XYZ',
+  //     gastoTotalAno: 105000,
+  //     elementosSubGrid: [
+  //       {
+  //         elemento: 'Vídeo',
+  //         descricao: 'Produção de vídeo institucional',
+  //         ficha: '123-A',
+  //         recurso: 'Vídeo Maker',
+  //         orcamentoInicial: 40000,
+  //         orcamentoAtualizado: 45000,
+  //         previsaoGastosAno: 42000,
+  //         diferencaPrevistaAno: 3000,
+  //         itens: []
+  //       }
+  //     ]
+  //   },
+  //   // ...outros elementos
+  // ];
+
+  atividades: Atividade[] = [];
   linhasExpandidas: Set<Atividade> = new Set<Atividade>();
 
   modalAberto: boolean = false;
   itensModal: any[] = [];
 
-  // Mock data
-  mockAtividades: Atividade[] = [
-    {
-      id: 1,
-      nomeAtividade: 'Manutenção das Atividades das Unidades Básicas de Saúde',
-      descricao: 'Manutenção e operação das UBS',
-      ficha: '868',
-      orcamentoInicial: 796000,
-      orcamentoAtualizado: 796000,
-      previsaoGastosAno: 796000,
-      diferencaPrevista: 0,
-      classificacao: 'Obrigatorio',
-      historico: 'Despesas contínuas com UBS',
-      fornecedor: 'Diversos',
-      gastoTotalAno: 796000,
-      elementosSubGrid: [
-        {
-          elemento: 'Elemento 1',
-          descricao: 'Descrição 1',
-          ficha: 'Ficha 1',
-          recurso: 'Recurso 1',
-          orcamentoInicial: 100000,
-          orcamentoAtualizado: 110000,
-          previsaoGastosAno: 105000,
-          diferencaPrevistaAno: 5000,
-          itens: [ /* example items array */ ]
-        },
-        {
-          elemento: 'Elemento 2',
-          descricao: 'Descrição 2',
-          ficha: 'Ficha 2',
-          recurso: 'Recurso 2',
-          orcamentoInicial: 200000,
-          orcamentoAtualizado: 210000,
-          previsaoGastosAno: 205000,
-          diferencaPrevistaAno: 5000,
-          itens: [ /* example items array */ ]
-        }
-      ]
-    },
-    {
-      id: 2,
-      nomeAtividade: 'Publicidade e Marketing',
-      descricao: 'Ações de comunicação',
-      ficha: '875',
-      orcamentoInicial: 50000,
-      orcamentoAtualizado: 50000,
-      previsaoGastosAno: 50000,
-      diferencaPrevista: 0,
-      classificacao: 'Midia',
-      historico: 'Campanhas publicitárias',
-      fornecedor: 'Agência XYZ',
-      gastoTotalAno: 50000,
-      elementosSubGrid: [
-        {
-          elemento: 'Elemento A',
-          descricao: 'Descrição A',
-          ficha: 'Ficha A',
-          recurso: 'Recurso A',
-          orcamentoInicial: 25000,
-          orcamentoAtualizado: 26000,
-          previsaoGastosAno: 25500,
-          diferencaPrevistaAno: 500,
-          itens: [ /* example items array */ ]
-        }
-      ]
-    }
-  ];
-
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+    private atividadesService: AtividadesService,
+    private mensagemService: MensagemService
+    ) {}
 
   ngOnInit() {
-    console.log('AtividadesGridComponent carregado');
-    this.updateAtividadesSums();
-    this.dataSource.data = this.mockAtividades;
+    this.carregarAtividades();
   }
 
+  carregarAtividades() {
+    this.atividadesService.listarAtividades().subscribe({
+      next: (atividades) => {
+        this.atividades = atividades;
+        console.log(atividades);
+      },
+      error: (erro) => {
+        this.mensagemService.mostrarErro('Erro ao carregar categorias');
+        console.error('Erro ao carregar categorias:', erro);
+      }
+    });
+  }
+
+
+  // carregarAtividades() {
+  //   const atividades = this.atividadesService.recuperarAtividades();
+  //   if (atividades. === 0) {
+  //     // Se não houver dados no localStorage, pode-se inicializar com dados padrão ou vazio
+  //     this.dataSource.data = [];
+  //   } else {
+  //     this.dataSource.data = atividades;
+  //   }
+  //   this.updateAtividadesSums();
+  // }
+
   updateAtividadesSums() {
-    this.mockAtividades.forEach(atividade => {
-      if (atividade.elementosSubGrid && atividade.elementosSubGrid.length > 0) {
-        atividade.orcamentoInicial = atividade.elementosSubGrid.reduce((sum, el) => sum + el.orcamentoInicial, 0);
-        atividade.orcamentoAtualizado = atividade.elementosSubGrid.reduce((sum, el) => sum + el.orcamentoAtualizado, 0);
-        atividade.previsaoGastosAno = atividade.elementosSubGrid.reduce((sum, el) => sum + el.previsaoGastosAno, 0);
-        atividade.diferencaPrevista = atividade.elementosSubGrid.reduce((sum, el) => sum + el.diferencaPrevistaAno, 0);
+    this.atividades.forEach(atividade => {
+      if (atividade.Elementos && atividade.Elementos.length > 0) {
+        atividade.OrcamentoInicial = atividade.Elementos.reduce((sum, el) => sum + el.OrcamentoInicial, 0);
+        atividade.OrcamentoAtualizado = atividade.Elementos.reduce((sum, el) => sum + el.OrcamentoAtualizado, 0);
+        atividade.PrevisaoGastosAno = atividade.Elementos.reduce((sum, el) => sum + el.PrevisaoGastosAno, 0);
+        atividade.DiferencaPrevista = atividade.Elementos.reduce((sum, el) => sum + el.DiferencaPrevistaAno, 0);
       }
     });
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.carregarAtividades(); // Recarregar para resetar a lista antes de filtrar
+    this.atividades = this.atividades.filter(atividade =>
+      atividade.NomeAtividade.toLowerCase().includes(filterValue) ||
+      atividade.Descricao.toLowerCase().includes(filterValue)
+    );
   }
 
   editarAtividade(atividade: Atividade) {
-    this.router.navigateByUrl(`/gestao-orcamentaria/atividades/editar/${atividade.id}`);
+    this.router.navigateByUrl(`/gestao-orcamentaria/atividades/editar/${atividade.Id}`);
   }
 
   novaAtividade() {
@@ -178,7 +147,7 @@ export class AtividadesGridComponent implements OnInit {
     return this.linhasExpandidas.has(elemento);
   }
 
-  abrirModalItens(elemento: ElementoSubGrid) {
+  abrirModalItens(elemento: any) {
     this.modalAberto = true;
     this.itensModal = elemento.itens || [];
   }
@@ -189,8 +158,31 @@ export class AtividadesGridComponent implements OnInit {
   }
 
   atualizarItens(itensAtualizados: any[]) {
-    // Atualize os itens conforme necessário, por exemplo, atualizar o mockAtividades ou chamar um serviço
+    // Atualize os itens conforme necessário, por exemplo, atualizar o localStorage via serviço
     console.log('Itens atualizados:', itensAtualizados);
     this.fecharModal();
   }
+
+  obterOrcamentoInicialAtividade(atividade: Atividade): number {
+    const elementos = atividade.Elementos ?? [];
+
+    const somaOrcamentos = elementos.reduce((soma, elemento) => {
+      const orcamentoInicial = elemento.OrcamentoInicial ?? 0;
+      return soma + orcamentoInicial;
+    }, 0);
+
+    return somaOrcamentos;
+  }
+
+  obterOrcamentoAtualizadoAtividade(atividade: Atividade): number {
+    const elementos = atividade.Elementos ?? [];
+
+    const somaOrcamentos = elementos.reduce((soma, elemento) => {
+      const orcamentoAtualizado = elemento.OrcamentoAtualizado ?? 0;
+      return soma + orcamentoAtualizado;
+    }, 0);
+
+    return somaOrcamentos;
+  }
+
 }
