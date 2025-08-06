@@ -109,27 +109,27 @@ export class AtividadeEditComponent implements OnInit {
       orcamentoAtualizado: [el.OrcamentoAtualizado, [Validators.required, Validators.min(0)]],
       diferencaPrevistaAno: [el.DiferencaPrevistaAno, [Validators.required]],
       itens: this.fb.array(el.Itens?.map((item: any) => this.fb.group({
-        descricao: [item.Descricao, Validators.required],
-        tipoGasto: [item.TipoGasto, Validators.required],
-        classificacao: [item.Classificacao, Validators.required],
-        historico: [item.Historico],
-        fornecedor: [item.Fornecedor],
-        fonte: [item.Fonte],
-        valor: this.fb.group({
-          total: [{value: item.Valor?.Total || 0, disabled: true}],
-          periodosAnteriores: [item.Valor?.PeriodosAnteriores || 0],
-          janeiro: [item.Valor?.Janeiro || 0],
-          fevereiro: [item.Valor?.Fevereiro || 0],
-          marco: [item.Valor?.Marco || 0],
-          abril: [item.Valor?.Abril || 0],
-          maio: [item.Valor?.Maio || 0],
-          junho: [item.Valor?.Junho || 0],
-          julho: [item.Valor?.Julho || 0],
-          agosto: [item.Valor?.Agosto || 0],
-          setembro: [item.Valor?.Setembro || 0],
-          outubro: [item.Valor?.Outubro || 0],
-          novembro: [item.Valor?.Novembro || 0],
-          dezembro: [item.Valor?.Dezembro || 0],
+        Descricao: [item.Descricao, Validators.required],
+        TipoGasto: [item.TipoGasto, Validators.required],
+        Classificacao: [item.Classificacao, Validators.required],
+        Historico: [item.Historico],
+        Fornecedor: [item.Fornecedor],
+        Fonte: [item.Fonte],
+        Valor: this.fb.group({
+          Total: [{value: item.Valor?.Total || 0, disabled: true}],
+          PeriodosAnteriores: [item.Valor?.PeriodosAnteriores || 0],
+          Janeiro: [item.Valor?.Janeiro || 0],
+          Fevereiro: [item.Valor?.Fevereiro || 0],
+          Marco: [item.Valor?.Marco || 0],
+          Abril: [item.Valor?.Abril || 0],
+          Maio: [item.Valor?.Maio || 0],
+          Junho: [item.Valor?.Junho || 0],
+          Julho: [item.Valor?.Julho || 0],
+          Agosto: [item.Valor?.Agosto || 0],
+          Setembro: [item.Valor?.Setembro || 0],
+          Outubro: [item.Valor?.Outubro || 0],
+          Novembro: [item.Valor?.Novembro || 0],
+          Dezembro: [item.Valor?.Dezembro || 0],
         })
       }))) || this.fb.array([])
     }));
@@ -212,8 +212,6 @@ export class AtividadeEditComponent implements OnInit {
   }
 
   salvarAtividadeAtualizada(): void {
-    debugger;
-
     if (this.form.valid && this.atividadeId !== null) {
       const atividade = this.form.getRawValue();
       atividade.id = this.atividadeId;
@@ -234,8 +232,6 @@ export class AtividadeEditComponent implements OnInit {
   }
 
   onSubmit() {
-    debugger;
-
     if (this.form.valid) {
       const atividade = this.form.getRawValue();
       var editarAtividade = this.editandoAtividade && this.atividadeId !== null

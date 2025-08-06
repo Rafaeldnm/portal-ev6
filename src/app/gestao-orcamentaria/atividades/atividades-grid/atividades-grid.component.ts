@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AtividadesService } from '../../services/atividades.service';
 import { Atividade } from '../../models/atividade.model';
 import { MensagemService } from 'src/app/gestao-investimentos-publicos/services/mensagem.service';
+import { ElementoSubGrid } from 'src/app/gestao-orcamentaria/models/elemento-sub-grid.model';
+import { Item } from 'src/app/gestao-orcamentaria/models/item.model';
 
 @Component({
   selector: 'app-atividades-grid',
@@ -71,7 +73,7 @@ export class AtividadesGridComponent implements OnInit {
   linhasExpandidas: Set<Atividade> = new Set<Atividade>();
 
   modalAberto: boolean = false;
-  itensModal: any[] = [];
+  itensModal: Item[] = [];
 
   constructor(private router: Router,
     private atividadesService: AtividadesService,
@@ -147,9 +149,9 @@ export class AtividadesGridComponent implements OnInit {
     return this.linhasExpandidas.has(elemento);
   }
 
-  abrirModalItens(elemento: any) {
+  abrirModalItens(elemento: ElementoSubGrid) {
     this.modalAberto = true;
-    this.itensModal = elemento.itens || [];
+    this.itensModal = elemento.Itens || [];
   }
 
   fecharModal() {
@@ -166,23 +168,86 @@ export class AtividadesGridComponent implements OnInit {
   obterOrcamentoInicialAtividade(atividade: Atividade): number {
     const elementos = atividade.Elementos ?? [];
 
-    const somaOrcamentos = elementos.reduce((soma, elemento) => {
+    const orcamentoInicialAtividade = elementos.reduce((soma, elemento) => {
       const orcamentoInicial = elemento.OrcamentoInicial ?? 0;
       return soma + orcamentoInicial;
     }, 0);
 
-    return somaOrcamentos;
+    return orcamentoInicialAtividade;
   }
 
   obterOrcamentoAtualizadoAtividade(atividade: Atividade): number {
     const elementos = atividade.Elementos ?? [];
 
-    const somaOrcamentos = elementos.reduce((soma, elemento) => {
+    const orcamentoAtualizadoAtividade = elementos.reduce((soma, elemento) => {
       const orcamentoAtualizado = elemento.OrcamentoAtualizado ?? 0;
       return soma + orcamentoAtualizado;
     }, 0);
 
-    return somaOrcamentos;
+    return orcamentoAtualizadoAtividade;
+  }
+
+  obterPrevisaoDeGastosAtividade(atividade: Atividade): number {
+    const elementos = atividade.Elementos ?? [];
+
+    const previsaoGastosAtividade = elementos.reduce((soma, elemento) => {
+      const somaItens = elemento.Itens?.reduce((subtotal, item) => {
+        const valor = item.Valor;
+
+        // Soma todos os campos de "Valor", exceto o "Total"
+        const somaValor = Object.entries(valor)
+          .filter(([chave]) => chave !== 'Total')
+          .reduce((acc, [, val]) => acc + val, 0);
+
+        return subtotal + somaValor;
+      }, 0) ?? 0;
+
+      return soma + somaItens;
+    }, 0);
+
+    return previsaoGastosAtividade;
+  }
+
+  obterDiferencaPrevistaAtividade(atividade: Atividade): number {
+    const previsaoGastos = this.obterPrevisaoDeGastosAtividade(atividade);
+    var orcamentoInicialAtividade = this.obterOrcamentoInicialAtividade(atividade)
+    var orcamentoAtualizadoAtividade = this.obterOrcamentoAtualizadoAtividade(atividade)
+
+    const orcamentoBase = (orcamentoInicialAtividade && orcamentoAtualizadoAtividade > 0)
+      ? orcamentoAtualizadoAtividade
+      : orcamentoInicialAtividade;
+
+    const diferencaPrevistaAtividade = orcamentoBase - previsaoGastos;
+
+    return diferencaPrevistaAtividade;
+  }
+
+  // Calculo de informações do subGrid de elementos:
+
+  obterPrevisaoDeGastosElemento(elemento: ElementoSubGrid): number {
+    const somaPrevisaoGastosElemento = elemento.Itens?.reduce((soma, item) => {
+      const valor = item.Valor;
+
+      const somaValor = Object.entries(valor)
+        .filter(([chave]) => chave !== 'Total')
+        .reduce((acc, [, val]) => acc + val, 0);
+
+      return soma + somaValor;
+    }, 0) ?? 0;
+
+    return somaPrevisaoGastosElemento;
+  }
+
+  obterDiferencaPrevistaElemento(elemento: ElementoSubGrid): number {
+    const previsaoGastos = this.obterPrevisaoDeGastosElemento(elemento);
+
+    const orcamentoBase = (elemento.OrcamentoInicial && elemento.OrcamentoAtualizado > 0)
+      ? elemento.OrcamentoAtualizado
+      : elemento.OrcamentoInicial;
+
+    const diferencaPrevistaElemento = orcamentoBase - previsaoGastos;
+
+    return diferencaPrevistaElemento;
   }
 
 }

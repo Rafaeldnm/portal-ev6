@@ -254,33 +254,34 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
+import { Item } from 'src/app/gestao-orcamentaria/models/item.model';
 
-export interface Valor {
-  total: number;
-  periodosAnteriores: number;
-  janeiro: number;
-  fevereiro: number;
-  marco: number;
-  abril: number;
-  maio: number;
-  junho: number;
-  julho: number;
-  agosto: number;
-  setembro: number;
-  outubro: number;
-  novembro: number;
-  dezembro: number;
-}
+// export interface Valor {
+//   total: number;
+//   periodosAnteriores: number;
+//   janeiro: number;
+//   fevereiro: number;
+//   marco: number;
+//   abril: number;
+//   maio: number;
+//   junho: number;
+//   julho: number;
+//   agosto: number;
+//   setembro: number;
+//   outubro: number;
+//   novembro: number;
+//   dezembro: number;
+// }
 
-export interface Item {
-  descricao: string;
-  tipoGasto: string;
-  classificacao: string;
-  historico?: string;
-  fornecedor?: string;
-  fonte?: string;
-  valor: Valor;
-}
+// export interface Item {
+//   descricao: string;
+//   tipoGasto: string;
+//   classificacao: string;
+//   historico?: string;
+//   fornecedor?: string;
+//   fonte?: string;
+//   valor: Valor;
+// }
 
 @Component({
   selector: 'app-item-modal',
@@ -303,6 +304,8 @@ export class ItemModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("Itens iniciais:", this.itens);
+
     this.formulario = this.fb.group({
       itensArray: this.fb.array([])
     });
@@ -331,27 +334,27 @@ export class ItemModalComponent implements OnInit {
 
   criarGrupoItem(item?: Item): FormGroup {
     return this.fb.group({
-      descricao: [item?.descricao || '', Validators.required],
-      tipoGasto: [item?.tipoGasto || 'Obrigatório', Validators.required],
-      classificacao: [item?.classificacao || 'Midia', Validators.required],
-      historico: [item?.historico || ''],
-      fornecedor: [item?.fornecedor || ''],
-      fonte: [item?.fonte || ''],
+      descricao: [item?.Descricao || '', Validators.required],
+      tipoGasto: [item?.TipoGasto || 'Obrigatório', Validators.required],
+      classificacao: [item?.Classificacao || 'Midia', Validators.required],
+      historico: [item?.Historico || ''],
+      fornecedor: [item?.Fornecedor || ''],
+      fonte: [item?.Fonte || ''],
       valor: this.fb.group({
-        total: [{ value: item?.valor?.total || 0, disabled: true }],
-        periodosAnteriores: [item?.valor?.periodosAnteriores || 0],
-        janeiro: [item?.valor?.janeiro || 0],
-        fevereiro: [item?.valor?.fevereiro || 0],
-        marco: [item?.valor?.marco || 0],
-        abril: [item?.valor?.abril || 0],
-        maio: [item?.valor?.maio || 0],
-        junho: [item?.valor?.junho || 0],
-        julho: [item?.valor?.julho || 0],
-        agosto: [item?.valor?.agosto || 0],
-        setembro: [item?.valor?.setembro || 0],
-        outubro: [item?.valor?.outubro || 0],
-        novembro: [item?.valor?.novembro || 0],
-        dezembro: [item?.valor?.dezembro || 0]
+        total: [{ value: item?.Valor?.Total || 0, disabled: true }],
+        periodosAnteriores: [item?.Valor?.PeriodosAnteriores || 0],
+        janeiro: [item?.Valor?.Janeiro || 0],
+        fevereiro: [item?.Valor?.Fevereiro || 0],
+        marco: [item?.Valor?.Marco || 0],
+        abril: [item?.Valor?.Abril || 0],
+        maio: [item?.Valor?.Maio || 0],
+        junho: [item?.Valor?.Junho || 0],
+        julho: [item?.Valor?.Julho || 0],
+        agosto: [item?.Valor?.Agosto || 0],
+        setembro: [item?.Valor?.Setembro || 0],
+        outubro: [item?.Valor?.Outubro || 0],
+        novembro: [item?.Valor?.Novembro || 0],
+        dezembro: [item?.Valor?.Dezembro || 0]
       })
     });
   }
@@ -363,8 +366,6 @@ export class ItemModalComponent implements OnInit {
   }
 
   assinarMudancasValor(grupoItem: FormGroup): void {
-    debugger;
-
     const grupoValor = grupoItem.get('valor') as FormGroup;
 
     grupoValor.valueChanges.subscribe((valores: Record<string, string | number>) => {
