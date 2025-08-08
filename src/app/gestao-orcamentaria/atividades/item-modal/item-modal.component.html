@@ -3,23 +3,23 @@
   <h2>Itens do Elemento</h2>
   <form [formGroup]="formulario" *ngIf="formulario">
     <div formArrayName="itensArray">
-      <div *ngFor="let item of itensArray.controls; let i = index" [formGroupName]="i" class="item-card row gx-3 gy-2 align-items-center">
+      <div *ngFor="let item of itensArray.controls; let i = index" [formGroupName]="i" class="item-card row gx-3 align-items-center mb-5">
         <div class="item-header col-12 d-flex justify-content-between align-items-center">
           <h3>Item {{ i + 1 }}</h3>
           <button type="button" (click)="removeItem(i)" class="btn btn-danger btn-sm">Remover</button>
         </div>
-        <div class="item-fields col-12 row gx-3 gy-2">
-          <div class="col-md-4">
+        <div class="item-fields col-12 row gx-3">
+          <div class="col-md-6">
             <label>Descrição</label>
             <input type="text" formControlName="descricao" required class="form-control" />
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label>Tipo de gasto</label>
             <select formControlName="tipoGasto" required class="form-select">
               <option *ngFor="let tipo of tiposGasto" [value]="tipo">{{ tipo }}</option>
             </select>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label>Classificação</label>
             <select formControlName="classificacao" required class="form-select">
               <option *ngFor="let c of classificacoes" [value]="c">{{ c }}</option>
@@ -38,78 +38,179 @@
             <input type="text" formControlName="fonte" class="form-control" />
           </div>
           <div formGroupName="valor" class="valor-group col-12 row gx-3 gy-2">
-            <div class="col-md-3 d-flex flex-column">
+
+            <div class="col-md-2 d-flex flex-column">
               <label>Janeiro</label>
               <div class="d-flex align-items-center">
-                <input type="text" formControlName="janeiro" class="form-control" />
-                <button type="button" class="btn btn-sm btn-outline-primary ms-2 mb-2" (click)="replicateToAllMonths(i)" title="Replicar para todos os meses">⇄</button>
+                <input type="text"
+                  formControlName="janeiro"
+                  class="form-control"
+                  mask="separator.2"
+                  prefix="R$ "
+                  thousandSeparator="."
+                  decimalMarker=","
+                />
+                <button type="button" class="btn btn-sm btn-outline-primary ms-2 mb-2" (click)="replicarParaTodosOsMeses(i)" title="Replicar para todos os meses">⇄</button>
               </div>
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
               <label>Fevereiro</label>
-              <input type="text" formControlName="fevereiro" class="form-control" />
+                <input type="text"
+                  formControlName="fevereiro"
+                  class="form-control"
+                  mask="separator.2"
+                  prefix="R$ "
+                  thousandSeparator="."
+                  decimalMarker=","
+                />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
               <label>Março</label>
-              <input type="text" formControlName="marco" class="form-control" />
-            </div>
-            <div class="col-md-3">
-              <label>Abril</label>
-              <input type="text" formControlName="abril" class="form-control" />
-            </div>
-            <div class="col-md-3">
-              <label>Maio</label>
-              <input type="text" formControlName="maio" class="form-control" />
-            </div>
-            <div class="col-md-3">
-              <label>Junho</label>
-              <input type="text" formControlName="junho" class="form-control" />
-            </div>
-            <div class="col-md-3">
-              <label>Julho</label>
-              <input
-                type="text"
+              <input type="text"
+                formControlName="marco"
                 class="form-control"
-                [value]="formatarValor(formulario.get('valor.julho')?.value)"
-                (input)="onInputMonetario($event, 'julho', i)"
-                (blur)="formatarCampo('julho')"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
               />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
+              <label>Abril</label>
+              <input type="text"
+                formControlName="abril"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
+            </div>
+
+            <div class="col-md-2">
+              <label>Maio</label>
+              <input type="text"
+                formControlName="maio"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
+            </div>
+
+            <div class="col-md-2">
+              <label>Junho</label>
+              <input type="text"
+                formControlName="junho"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
+            </div>
+
+            <div class="col-md-2">
+              <label>Julho</label>
+              <input type="text"
+                formControlName="julho"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
+            </div>
+
+            <div class="col-md-2">
               <label>Agosto</label>
-              <input type="text" formControlName="agosto" class="form-control" />
+              <input type="text"
+                formControlName="agosto"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
               <label>Setembro</label>
-              <input type="text" formControlName="setembro" class="form-control" />
+              <input type="text"
+                formControlName="setembro"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
               <label>Outubro</label>
-              <input type="text" formControlName="outubro" class="form-control" />
+              <input type="text"
+                formControlName="outubro"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
               <label>Novembro</label>
-              <input type="text" formControlName="novembro" class="form-control" />
+              <input type="text"
+                formControlName="novembro"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
             </div>
-            <div class="col-md-3">
+
+            <div class="col-md-2">
               <label>Dezembro</label>
               <input type="text"
                 formControlName="dezembro"
-
-                tipoValor="Financeiro"
                 class="form-control"
-                required
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
               />
             </div>
+
             <div class="col-md-3">
               <label>Períodos Anteriores</label>
-              <input type="text" formControlName="periodosAnteriores" class="form-control" />
+              <input type="text"
+                formControlName="periodosAnteriores"
+                class="form-control"
+                mask="separator.2"
+                prefix="R$ "
+                thousandSeparator="."
+                decimalMarker=","
+              />
             </div>
-            <div class="col-md-3 d-flex flex-column order-last">
 
+            <div class="col-md-3 d-flex flex-column order-last">
               <label>Total</label>
-              <input type="text" formControlName="total" [attr.disabled]="true" class="form-control" />
+              <input type="text"
+              formControlName="total"
+              class="form-control"
+              mask="separator.2"
+              prefix="R$ "
+              thousandSeparator="."
+              decimalMarker=","
+              [attr.disabled]="true"
+            />
             </div>
+
           </div>
         </div>
       </div>

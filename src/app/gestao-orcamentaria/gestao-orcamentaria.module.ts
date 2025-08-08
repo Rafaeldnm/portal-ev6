@@ -18,6 +18,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { DashboardComponent } from 'src/app/gestao-orcamentaria/dashboard/dashboard.component';
 import { GestaoOrcamentariaRoutingModule } from './gestao-orcamentaria-routing.module';
 import { SharedModule } from '../shared/shared.module';
+import { IConfig, NgxMaskModule } from 'ngx-mask';
+
+const maskConfig: Partial<IConfig> = {
+  validation: false,
+};
 
 @NgModule({
   declarations: [
@@ -25,7 +30,7 @@ import { SharedModule } from '../shared/shared.module';
     AtividadesGridComponent,
     AtividadeEditComponent,
     DashboardComponent,
-    ItemModalComponent
+    ItemModalComponent,
   ],
   imports: [
     CommonModule,
@@ -42,10 +47,12 @@ import { SharedModule } from '../shared/shared.module';
     MatProgressBarModule,
     MatNativeDateModule,
     GestaoOrcamentariaRoutingModule,
-    SharedModule
+    SharedModule,
+    NgxMaskModule.forRoot(maskConfig)
+
   ],
   exports: [
-    NavbarGestaoOrcamentariaComponent
+    NavbarGestaoOrcamentariaComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

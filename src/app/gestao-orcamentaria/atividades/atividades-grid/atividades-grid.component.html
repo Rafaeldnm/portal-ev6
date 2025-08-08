@@ -145,7 +145,7 @@
               <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Ações </th>
             <td mat-cell style="text-align: center;" *matCellDef="let elemento">
                 <button class="btn btn-primary btn-sm" (click)="abrirModalItens(elemento)">
-                  Itens
+                  Itens ({{elemento.Itens?.length || 0}})
                 </button>
               </td>
             </ng-container>

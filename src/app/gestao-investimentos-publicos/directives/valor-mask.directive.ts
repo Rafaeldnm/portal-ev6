@@ -41,10 +41,9 @@ export class ValorMaskDirective implements OnInit {
 
   private atualizarModelo() {
     if (this.control && this.control.control) {
-      this.control.control.setValue(this.valorNumerico, { emitEvent: false });
+      this.control.control.setValue(this.valorNumerico);
     }
   }
-
 
   @HostListener('focus')
   onFocus() {

@@ -69,31 +69,8 @@ export class AtividadeEditComponent implements OnInit {
       }
     });
 
-    // const atividades$ = this.atividadesService.listarAtividades();
-    // const atividades = await atividades$.toPromise();
-    // const atividade = atividades.find((a: any) => a.id === id);
-    // if (atividade) {
-      // this.form.patchValue({
-      //   nomeAtividade: atividade.nomeAtividade,
-      //   descricao: atividade.descricao
-      // });
-      // this.setElementos(atividade.elementos);
-    // }
   }
 
-  // async carregarAtividade(id: number) {
-
-  //   const atividades$ = this.atividadesService.listarAtividades();
-  //   const atividades = await atividades$.toPromise();
-  //   const atividade = atividades.find((a: any) => a.id === id);
-  //   if (atividade) {
-  //     this.form.patchValue({
-  //       nomeAtividade: atividade.nomeAtividade,
-  //       descricao: atividade.descricao
-  //     });
-  //     this.setElementos(atividade.elementos);
-  //   }
-  // }
 
   get elementos(): FormArray {
     return this.form.get('elementos') as FormArray;
@@ -211,6 +188,8 @@ export class AtividadeEditComponent implements OnInit {
     this.fecharModal();
   }
 
+
+
   salvarAtividadeAtualizada(): void {
     if (this.form.valid && this.atividadeId !== null) {
       const atividade = this.form.getRawValue();
@@ -227,9 +206,15 @@ export class AtividadeEditComponent implements OnInit {
           );
         }
       });
-
     }
-  }
+
+      const idAtividade = this.route.snapshot.paramMap.get('id');
+      const id = idAtividade !== null ? Number(idAtividade) : null;
+
+      if (id !== null && !isNaN(id)) {
+        this.carregarAtividade(id);
+      }
+    }
 
   onSubmit() {
     if (this.form.valid) {
@@ -272,4 +257,5 @@ export class AtividadeEditComponent implements OnInit {
   onCancel() {
     this.router.navigateByUrl('/gestao-orcamentaria/atividades');
   }
+
 }

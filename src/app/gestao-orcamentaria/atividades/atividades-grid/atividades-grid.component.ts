@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
 import { AtividadesService } from '../../services/atividades.service';
 import { Atividade } from '../../models/atividade.model';
 import { MensagemService } from 'src/app/gestao-investimentos-publicos/services/mensagem.service';
@@ -36,39 +35,6 @@ export class AtividadesGridComponent implements OnInit {
     'Acoes'
   ];
 
-  dataSource = new MatTableDataSource<Atividade>();
-
-  // atividades: Atividade[] = [
-  //   {
-  //     id: 1,
-  //     nomeAtividade: 'Campanha Publicitária',
-  //     descricao: 'Campanha institucional no primeiro semestre',
-  //     ficha: '123',
-  //     orcamentoInicial: 100000,
-  //     orcamentoAtualizado: 120000,
-  //     previsaoGastosAno: 110000,
-  //     diferencaPrevista: 10000,
-  //     classificacao: 'Midia',
-  //     historico: 'Campanha aprovada em abril',
-  //     fornecedor: 'Agência XYZ',
-  //     gastoTotalAno: 105000,
-  //     elementosSubGrid: [
-  //       {
-  //         elemento: 'Vídeo',
-  //         descricao: 'Produção de vídeo institucional',
-  //         ficha: '123-A',
-  //         recurso: 'Vídeo Maker',
-  //         orcamentoInicial: 40000,
-  //         orcamentoAtualizado: 45000,
-  //         previsaoGastosAno: 42000,
-  //         diferencaPrevistaAno: 3000,
-  //         itens: []
-  //       }
-  //     ]
-  //   },
-  //   // ...outros elementos
-  // ];
-
   atividades: Atividade[] = [];
   linhasExpandidas: Set<Atividade> = new Set<Atividade>();
 
@@ -91,31 +57,8 @@ export class AtividadesGridComponent implements OnInit {
         console.log(atividades);
       },
       error: (erro) => {
-        this.mensagemService.mostrarErro('Erro ao carregar categorias');
-        console.error('Erro ao carregar categorias:', erro);
-      }
-    });
-  }
-
-
-  // carregarAtividades() {
-  //   const atividades = this.atividadesService.recuperarAtividades();
-  //   if (atividades. === 0) {
-  //     // Se não houver dados no localStorage, pode-se inicializar com dados padrão ou vazio
-  //     this.dataSource.data = [];
-  //   } else {
-  //     this.dataSource.data = atividades;
-  //   }
-  //   this.updateAtividadesSums();
-  // }
-
-  updateAtividadesSums() {
-    this.atividades.forEach(atividade => {
-      if (atividade.Elementos && atividade.Elementos.length > 0) {
-        atividade.OrcamentoInicial = atividade.Elementos.reduce((sum, el) => sum + el.OrcamentoInicial, 0);
-        atividade.OrcamentoAtualizado = atividade.Elementos.reduce((sum, el) => sum + el.OrcamentoAtualizado, 0);
-        atividade.PrevisaoGastosAno = atividade.Elementos.reduce((sum, el) => sum + el.PrevisaoGastosAno, 0);
-        atividade.DiferencaPrevista = atividade.Elementos.reduce((sum, el) => sum + el.DiferencaPrevistaAno, 0);
+        this.mensagemService.mostrarErro('Erro ao carregar atividades');
+        console.error('Erro ao carregar atividades:', erro);
       }
     });
   }
@@ -160,10 +103,11 @@ export class AtividadesGridComponent implements OnInit {
   }
 
   atualizarItens(itensAtualizados: any[]) {
-    // Atualize os itens conforme necessário, por exemplo, atualizar o localStorage via serviço
     console.log('Itens atualizados:', itensAtualizados);
     this.fecharModal();
   }
+
+  // Calculo de informações do grid de atividades:
 
   obterOrcamentoInicialAtividade(atividade: Atividade): number {
     const elementos = atividade.Elementos ?? [];
