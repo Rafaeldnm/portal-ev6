@@ -1,6 +1,7 @@
 import { Item } from './item.model';
 
 export interface ElementoSubGrid {
+  Id: number;
   Titulo: string;
   Descricao: string;
   Ficha: string;

@@ -104,7 +104,73 @@ export class AtividadesGridComponent implements OnInit {
 
   atualizarItens(itensAtualizados: any[]) {
     console.log('Itens atualizados:', itensAtualizados);
+
+    // REVISAR ESSA LÓGICA TODA AQ PQ TA ERRADO, NAO TA SERVINDO PRA CRIAR
+    debugger;
+    // Encontrar o elemento correspondente e atualizar seus itens
+    const elementoAtualizado = this.encontrarElementoPorItens(itensAtualizados);
+
+    if (elementoAtualizado) {
+      // Atualizar o elemento com os novos itens
+      elementoAtualizado.Itens = itensAtualizados;
+
+      // Encontrar a atividade correspondente
+      const atividade = this.encontrarAtividadePorElemento(elementoAtualizado);
+
+      if (atividade) {
+        // Preparar o payload para atualização
+        const atividadeAtualizada = {
+          ...atividade,
+          Elementos: atividade.Elementos?.map(el =>
+            this.compararElementos(el, elementoAtualizado) ? elementoAtualizado : el
+          ) || []
+        };
+
+        // Salvar no banco de dados
+        this.atividadesService.editarAtividade(atividade.Id, atividadeAtualizada).subscribe({
+          next: (response) => {
+            this.mensagemService.mostrarSucesso('Itens atualizados com sucesso!');
+            this.carregarAtividades(); // Recarregar os dados
+          },
+          error: (erro) => {
+            this.mensagemService.mostrarErro('Erro ao atualizar itens');
+            console.error('Erro ao atualizar itens:', erro);
+          }
+        });
+      }
+    }
+
     this.fecharModal();
+  }
+
+  private encontrarElementoPorItens(itens: any[]): ElementoSubGrid | null {
+    // Buscar o elemento que possui esses itens
+    for (const atividade of this.atividades) {
+      const elemento = atividade.Elementos?.find(el =>
+        el.Itens && el.Itens.some(item =>
+          itens.some(itemAtualizado =>
+            (itemAtualizado.Id && item.Id && itemAtualizado.Id === item.Id)
+          )
+        )
+      );
+      if (elemento) return elemento;
+    }
+    return null;
+  }
+
+  private encontrarAtividadePorElemento(elemento: ElementoSubGrid): Atividade | null {
+    return this.atividades.find(atividade =>
+      atividade.Elementos?.some(el =>
+        this.compararElementos(el, elemento)
+      )
+    ) || null;
+  }
+
+  private compararElementos(el1: ElementoSubGrid, el2: ElementoSubGrid): boolean {
+    return el1.Titulo === el2.Titulo &&
+           el1.Descricao === el2.Descricao &&
+           el1.Ficha === el2.Ficha &&
+           el1.Recurso === el2.Recurso;
   }
 
   // Calculo de informações do grid de atividades:

@@ -1,4 +1,5 @@
 export interface Item {
+  Id: number;
   Descricao: string;
   TipoGasto: 'Obrigatório' | 'Importante' | 'Outros';
   Classificacao: 'Midia' | 'Outros';
