@@ -54,6 +54,7 @@ export class AtividadesGridComponent implements OnInit {
     this.atividadesService.listarAtividades().subscribe({
       next: (atividades) => {
         this.atividades = atividades;
+        this.calcularTotais();
         console.log(atividades);
       },
       error: (erro) => {
@@ -62,6 +63,27 @@ export class AtividadesGridComponent implements OnInit {
       }
     });
   }
+
+  somaOrcamentoInicial: number = 0;
+  somaOrcamentoAtualizado: number = 0;
+  somaPrevisaoGastos: number = 0;
+  somaDiferencaPrevista: number = 0;
+
+  calcularTotais() {
+    this.somaOrcamentoInicial = 0;
+    this.somaOrcamentoAtualizado = 0;
+    this.somaPrevisaoGastos = 0;
+    this.somaDiferencaPrevista = 0;
+
+    for (const atividade of this.atividades) {
+      this.somaOrcamentoInicial += this.obterOrcamentoInicialAtividade(atividade);
+      this.somaOrcamentoAtualizado += this.obterOrcamentoAtualizadoAtividade(atividade);
+      this.somaPrevisaoGastos += this.obterPrevisaoDeGastosAtividade(atividade);
+      this.somaDiferencaPrevista += this.obterDiferencaPrevistaAtividade(atividade);
+    }
+  }
+
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();

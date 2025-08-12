@@ -8,7 +8,6 @@
     </button>
   </div>
 
-
   <table mat-table [dataSource]="atividades" multiTemplateDataRows class="mat-elevation-z8">
 
     <!-- Expand/Collapse Column -->
@@ -158,6 +157,23 @@
     </ng-container>
 
   </table>
+
+  <div class="totais-atividades mt-4 p-3 border rounded bg-light">
+    <h3><b>Soma Total das Atividades</b></h3>
+    <p>Orçamento Inicial: {{ somaOrcamentoInicial | currency:'BRL' }}</p>
+    <p>Orçamento Atualizado: {{ somaOrcamentoAtualizado | currency:'BRL' }}</p>
+    <p>Previsão de Gastos/Ano: {{ somaPrevisaoGastos | currency:'BRL' }}</p>
+
+    <p>Diferença Prevista:
+      <span [ngClass]="{
+      'label-green': somaDiferencaPrevista >= 0,
+      'label-red': somaDiferencaPrevista < 0
+      }">
+        {{ somaDiferencaPrevista | currency:'BRL' }}
+      </span>
+    </p>
+
+  </div>
 </div>
 
 <app-item-modal
