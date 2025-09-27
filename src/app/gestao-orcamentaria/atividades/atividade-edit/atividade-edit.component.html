@@ -1,4 +1,11 @@
 <app-navbar-gestao-orcamentaria></app-navbar-gestao-orcamentaria>
+
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Carregando...</p>
+</div>
+
+<div *ngIf="!isLoading">
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="atividade-edit-form p-4 bg-white rounded shadow-sm">
   <h2 class="mb-4">{{ editandoAtividade ? 'Editar Atividade' : 'Nova Atividade' }}</h2>
 
@@ -78,3 +85,4 @@
 (itensChange)="atualizarItens($event)"
 (fechar)="fecharModal()"
 ></app-item-modal>
+</div>

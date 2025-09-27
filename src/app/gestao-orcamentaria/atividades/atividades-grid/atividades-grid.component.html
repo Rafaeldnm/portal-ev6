@@ -1,6 +1,11 @@
 <app-navbar-gestao-orcamentaria></app-navbar-gestao-orcamentaria>
 
-<div class="atividades-grid-container px-5" style="background-color: white; padding: 10px;">
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Carregando...</p>
+</div>
+
+<div *ngIf="!isLoading" class="atividades-grid-container px-5" style="background-color: white; padding: 10px;">
   <div class="filter-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
     <input matInput (input)="applyFilter($event)" placeholder="Filtrar por Atividade" style="border-radius: 4px; border: 1px solid #ccc; padding: 6px 12px; width: 300px;" />
     <button class="btn btn-primary btn-md" (click)="novaAtividade()" style="font-weight: bold;">

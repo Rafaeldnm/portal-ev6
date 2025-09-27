@@ -34,3 +34,28 @@ tr.detail-row.expanded {
   height: auto;
   display: table-row;
 }
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.loading-container mat-spinner {
+  color: white;
+}
+
+.loading-container p {
+  color: white;
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: bold;
+}

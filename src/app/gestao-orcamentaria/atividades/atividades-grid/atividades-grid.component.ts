@@ -41,6 +41,8 @@ export class AtividadesGridComponent implements OnInit {
   modalAberto: boolean = false;
   itensModal: Item[] = [];
 
+  isLoading: boolean = true;
+
   constructor(private router: Router,
     private atividadesService: AtividadesService,
     private mensagemService: MensagemService
@@ -51,15 +53,18 @@ export class AtividadesGridComponent implements OnInit {
   }
 
   carregarAtividades() {
+    this.isLoading = true;
     this.atividadesService.listarAtividades().subscribe({
       next: (atividades) => {
         this.atividades = atividades;
         this.calcularTotais();
         console.log(atividades);
+        this.isLoading = false;
       },
       error: (erro) => {
         this.mensagemService.mostrarErro('Erro ao carregar atividades');
         console.error('Erro ao carregar atividades:', erro);
+        this.isLoading = false;
       }
     });
   }

@@ -26,6 +26,8 @@ export class AtividadeEditComponent implements OnInit {
   itensModal: Item[] = [];
   indiceElementoModal: number | null = null;
 
+  isLoading: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -46,6 +48,7 @@ export class AtividadeEditComponent implements OnInit {
     if (id) {
       this.editandoAtividade = true;
       this.atividadeId = +id;
+      this.isLoading = true;
       this.carregarAtividade(this.atividadeId);
     }
   }
@@ -62,10 +65,12 @@ export class AtividadeEditComponent implements OnInit {
         this.setElementos(atividade.Elementos);
 
         console.log(atividade);
+        this.isLoading = false;
       },
       error: (erro) => {
         this.mensagemService.mostrarErro('Erro ao carregar categoria');
         console.error('Erro ao carregar categoria:', erro);
+        this.isLoading = false;
       }
     });
 
