@@ -1,16 +1,28 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, UrlSegment } from '@angular/router';
 
 @Component({
   selector: 'app-navbar-gestao-orcamentaria',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarGestaoOrcamentariaComponent {
-  constructor(private router: Router) {}
+export class NavbarGestaoOrcamentariaComponent implements OnInit {
+  backUrl: string = '/inicio';
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    const currentUrl = this.route.snapshot.url.map((segment: UrlSegment) => segment.path).join('/');
+    if (currentUrl.includes('editar')) {
+      this.backUrl = '/gestao-orcamentaria/atividades';
+    }
+  }
 
   voltarParaInicio() {
-    this.router.navigateByUrl('/inicio');
+    this.router.navigateByUrl(this.backUrl);
   }
 
   navegarParaAtividades() {
