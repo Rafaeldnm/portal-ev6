@@ -245,9 +245,7 @@ export class AtividadesGridComponent implements OnInit {
     var orcamentoInicialAtividade = this.obterOrcamentoInicialAtividade(atividade)
     var orcamentoAtualizadoAtividade = this.obterOrcamentoAtualizadoAtividade(atividade)
 
-    const orcamentoBase = (orcamentoInicialAtividade && orcamentoAtualizadoAtividade > 0)
-      ? orcamentoAtualizadoAtividade
-      : orcamentoInicialAtividade;
+    const orcamentoBase = orcamentoAtualizadoAtividade > 0 ? orcamentoAtualizadoAtividade : orcamentoInicialAtividade;
 
     const diferencaPrevistaAtividade = orcamentoBase - previsaoGastos;
 
