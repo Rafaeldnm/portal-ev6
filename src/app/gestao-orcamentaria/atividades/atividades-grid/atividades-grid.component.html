@@ -142,7 +142,7 @@
 
             <ng-container matColumnDef="Acoes">
               <th mat-header-cell style="text-align: center;" *matHeaderCellDef> Ações </th>
-            <td mat-cell style="text-align: center;" *matCellDef="let elemento">
+              <td mat-cell style="text-align: center;" *matCellDef="let elemento">
                 <button class="btn btn-primary btn-sm" (click)="abrirModalItens(elemento)">
                   Itens ({{elemento.Itens?.length || 0}})
                 </button>
@@ -176,9 +176,8 @@
   </div>
 </div>
 
-<app-item-modal
+<app-item-visualizar-modal
 *ngIf="modalAberto"
 [itens]="itensModal"
-(itensChange)="atualizarItens($event)"
 (fechar)="fecharModal()"
-></app-item-modal>
+></app-item-visualizar-modal>

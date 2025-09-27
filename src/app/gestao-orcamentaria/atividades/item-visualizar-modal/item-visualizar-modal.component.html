@@ -1,0 +1,36 @@
+<div class="modal-backdrop" (click)="fecharModal()"></div>
+<div class="modal-container-visualizar">
+  <div class="modal-header">
+    <h2>Itens do Elemento</h2>
+    <button type="button" class="btn-close" (click)="fecharModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="itens-container">
+      <div class="grid-header">
+        <span class="header-nº">Nº</span>
+        <span class="header-descricao">Descrição</span>
+        <span class="header-tipo">Tipo</span>
+        <span class="header-classificacao">Classificação</span>
+        <span class="header-historico">Histórico</span>
+        <span class="header-fonte">Fonte</span>
+        <span class="header-total">Total</span>
+      </div>
+      <div *ngFor="let item of itens; let i = index" class="grid-row">
+        <span class="row-nº">{{ i + 1 }}.</span>
+        <span class="row-descricao" [title]="item.Descricao">{{ item.Descricao }}</span>
+        <span class="row-tipo badge badge-tipo">{{ item.TipoGasto }}</span>
+        <span class="row-classificacao badge badge-classificacao">{{ item.Classificacao }}</span>
+        <span class="row-historico" [title]="item.Historico">{{ item.Historico }}</span>
+        <span class="row-fonte" [title]="item.Fonte">{{ item.Fonte }}</span>
+        <span class="row-total total-value">{{ formatarMoeda(item.Valor?.Total || 0) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="fecharModal()">Fechar</button>
+  </div>
+</div>
