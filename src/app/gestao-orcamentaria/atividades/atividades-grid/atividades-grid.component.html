@@ -36,25 +36,25 @@
 
     <!-- Orçamento Inicial Column -->
     <ng-container matColumnDef="OrcamentoInicial">
-      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Inicial </th>
-      <td mat-cell style="text-align: right;" *matCellDef="let atividade"> {{obterOrcamentoInicialAtividade(atividade) | currency:'BRL'}} </td>
+      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Inicial (R$) </th>
+      <td mat-cell style="text-align: right;" *matCellDef="let atividade"> {{obterOrcamentoInicialAtividade(atividade) | number:'1.2-2'}} </td>
     </ng-container>
 
     <!-- Orçamento Atualizado Column -->
     <ng-container matColumnDef="OrcamentoAtualizado">
-      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Atualizado </th>
-      <td mat-cell style="text-align: right;" *matCellDef="let atividade"> {{obterOrcamentoAtualizadoAtividade(atividade) | currency:'BRL'}} </td>
+      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Atualizado (R$) </th>
+      <td mat-cell style="text-align: right;" *matCellDef="let atividade"> {{obterOrcamentoAtualizadoAtividade(atividade) | number:'1.2-2'}} </td>
     </ng-container>
 
     <!-- Previsão Gastos Ano Column -->
     <ng-container matColumnDef="PrevisaoGastosAno">
-      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Previsão de Gastos/Ano </th>
-      <td mat-cell style="text-align: right;" *matCellDef="let atividade"> {{obterPrevisaoDeGastosAtividade(atividade) | currency:'BRL'}} </td>
+      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Previsão de Gastos/Ano (R$) </th>
+      <td mat-cell style="text-align: right;" *matCellDef="let atividade"> {{obterPrevisaoDeGastosAtividade(atividade) | number:'1.2-2'}} </td>
     </ng-container>
 
     <!-- Diferença Prevista Column -->
     <ng-container matColumnDef="DiferencaPrevista">
-      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Diferença Prevista </th>
+      <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Diferença Prevista (R$) </th>
       <td mat-cell style="text-align: right;" *matCellDef="let atividade">
         <span
           [ngClass]="{
@@ -62,7 +62,7 @@
             'label-red': obterDiferencaPrevistaAtividade(atividade) < 0
           }"
         >
-          {{obterDiferencaPrevistaAtividade(atividade) | currency:'BRL'}}
+          {{obterDiferencaPrevistaAtividade(atividade) | number:'1.2-2'}}
         </span>
       </td>
     </ng-container>
@@ -110,23 +110,23 @@
             </ng-container>
 
             <ng-container matColumnDef="OrcamentoInicial">
-              <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Inicial </th>
-              <td mat-cell style="text-align: right;" *matCellDef="let elemento"> {{elemento.OrcamentoInicial | currency:'BRL'}} </td>
+              <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Inicial (R$) </th>
+              <td mat-cell style="text-align: right;" *matCellDef="let elemento"> {{elemento.OrcamentoInicial | number:'1.2-2'}} </td>
             </ng-container>
 
             <ng-container matColumnDef="OrcamentoAtualizado">
-              <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Atualizado </th>
-              <td mat-cell style="text-align: right;" *matCellDef="let elemento"> {{elemento.OrcamentoAtualizado | currency:'BRL'}} </td>
+              <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Orçamento Atualizado (R$) </th>
+              <td mat-cell style="text-align: right;" *matCellDef="let elemento"> {{elemento.OrcamentoAtualizado | number:'1.2-2'}} </td>
             </ng-container>
 
             <ng-container matColumnDef="PrevisaoGastosAno">
-              <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Previsão de gastos/ano </th>
-              <td mat-cell style="text-align: right;" *matCellDef="let elemento"> {{obterPrevisaoDeGastosElemento(elemento)| currency:'BRL'}} </td>
+              <th mat-header-cell style="text-align: right;" *matHeaderCellDef> Previsão de gastos/ano (R$) </th>
+              <td mat-cell style="text-align: right;" *matCellDef="let elemento"> {{obterPrevisaoDeGastosElemento(elemento)| number:'1.2-2'}} </td>
             </ng-container>
 
             <ng-container matColumnDef="DiferencaPrevistaAno">
               <th mat-header-cell style="text-align: right;" *matHeaderCellDef>
-                Diferença prevista/ano
+                Diferença prevista/ano (R$)
               </th>
               <td mat-cell style="text-align: right;" *matCellDef="let elemento">
                 <span
@@ -135,7 +135,7 @@
                     'label-red': obterDiferencaPrevistaElemento(elemento) < 0
                   }"
                 >
-                  {{ obterDiferencaPrevistaElemento(elemento) | currency:'BRL' }}
+                  {{ obterDiferencaPrevistaElemento(elemento) | number:'1.2-2' }}
                 </span>
               </td>
             </ng-container>
@@ -160,16 +160,16 @@
 
   <div class="totais-atividades mt-4 p-3 border rounded bg-light">
     <h3><b>Soma Total das Atividades</b></h3>
-    <p>Orçamento Inicial: {{ somaOrcamentoInicial | currency:'BRL' }}</p>
-    <p>Orçamento Atualizado: {{ somaOrcamentoAtualizado | currency:'BRL' }}</p>
-    <p>Previsão de Gastos/Ano: {{ somaPrevisaoGastos | currency:'BRL' }}</p>
+    <p>Orçamento Inicial: {{ somaOrcamentoInicial | number:'1.2-2' }} (R$)</p>
+    <p>Orçamento Atualizado: {{ somaOrcamentoAtualizado | number:'1.2-2' }} (R$)</p>
+    <p>Previsão de Gastos/Ano: {{ somaPrevisaoGastos | number:'1.2-2' }} (R$)</p>
 
     <p>Diferença Prevista:
       <span [ngClass]="{
       'label-green': somaDiferencaPrevista >= 0,
       'label-red': somaDiferencaPrevista < 0
       }">
-        {{ somaDiferencaPrevista | currency:'BRL' }}
+        {{ somaDiferencaPrevista | number:'1.2-2' }} (R$)
       </span>
     </p>
 
