@@ -183,9 +183,7 @@ export class AtividadesGridComponent implements OnInit {
     var orcamentoInicialAtividade = this.obterOrcamentoInicialAtividade(atividade)
     var orcamentoAtualizadoAtividade = this.obterOrcamentoAtualizadoAtividade(atividade)
 
-    const orcamentoBase = orcamentoAtualizadoAtividade > 0 ? orcamentoAtualizadoAtividade : orcamentoInicialAtividade;
-
-    const diferencaPrevistaAtividade = orcamentoBase - previsaoGastos;
+    const diferencaPrevistaAtividade = orcamentoAtualizadoAtividade - previsaoGastos;
 
     return diferencaPrevistaAtividade;
   }
@@ -209,11 +207,7 @@ export class AtividadesGridComponent implements OnInit {
   obterDiferencaPrevistaElemento(elemento: ElementoSubGrid): number {
     const previsaoGastos = this.obterPrevisaoDeGastosElemento(elemento);
 
-    const orcamentoBase = (elemento.OrcamentoInicial && elemento.OrcamentoAtualizado > 0)
-      ? elemento.OrcamentoAtualizado
-      : elemento.OrcamentoInicial;
-
-    const diferencaPrevistaElemento = orcamentoBase - previsaoGastos;
+    const diferencaPrevistaElemento = elemento.OrcamentoAtualizado - previsaoGastos;
 
     return diferencaPrevistaElemento;
   }
